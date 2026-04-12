@@ -38,14 +38,14 @@ export function LecturePage() {
         return {
           id,
           name: nextModule.name,
-          href: isLecture ? `/lecture/${id}` : `/module/${id}`,
+          href: `${import.meta.env.BASE_URL}#${isLecture ? `/lecture/${id}` : `/module/${id}`}`,
         };
       })
     : [];
 
   return (
     <main className="page">
-      <a className="back-link" href="/">
+      <a className="back-link" href={`${import.meta.env.BASE_URL}#/`}>
         Back to overview
       </a>
 
@@ -128,7 +128,7 @@ export function LecturePage() {
                 return {
                   id,
                   name: nextModule.name,
-                  href: isLecture ? `/lecture/${id}` : `/module/${id}`,
+                  href: `${import.meta.env.BASE_URL}#${isLecture ? `/lecture/${id}` : `/module/${id}`}`,
                 };
               });
               setNewAchievementTitle(

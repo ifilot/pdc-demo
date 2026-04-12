@@ -37,14 +37,14 @@ export function ModulePage() {
         return {
           id,
           name: nextModule.name,
-          href: isLecture ? `/lecture/${id}` : `/module/${id}`,
+          href: `${import.meta.env.BASE_URL}#${isLecture ? `/lecture/${id}` : `/module/${id}`}`,
         };
       })
     : [];
 
   return (
     <main className="page">
-      <a className="back-link" href="/">
+      <a className="back-link" href={`${import.meta.env.BASE_URL}#/`}>
         Back to overview
       </a>
 
@@ -137,7 +137,7 @@ export function ModulePage() {
                 return {
                   id,
                   name: nextModule.name,
-                  href: isLecture ? `/lecture/${id}` : `/module/${id}`,
+                  href: `${import.meta.env.BASE_URL}#${isLecture ? `/lecture/${id}` : `/module/${id}`}`,
                 };
               });
               setNewAchievementTitle(
@@ -155,7 +155,7 @@ export function ModulePage() {
           {completed ? "Mark as incomplete" : "Mark as complete"}
         </button>
         {isLeafLecture && (
-          <a className="primary-button" href={`/lecture/${module.id}`}>
+          <a className="primary-button" href={`${import.meta.env.BASE_URL}#/lecture/${module.id}`}>
             Open lecture
           </a>
         )}

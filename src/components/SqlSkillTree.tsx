@@ -104,7 +104,7 @@ export function CourseRoadmap() {
   );
 
   function goTo(path: string) {
-    window.location.assign(path);
+    window.location.assign(`${import.meta.env.BASE_URL}#${path}`);
   }
 
   return (
