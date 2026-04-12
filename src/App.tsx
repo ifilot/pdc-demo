@@ -4,10 +4,12 @@ import { LecturePage } from "./pages/LecturePage";
 import { ModulePage } from "./pages/ModulePage";
 import { LearnPage } from "./pages/LearnPage";
 import { LearningProgressProvider } from "./hooks/useLearningProgress";
+import { TopNav } from "./components/TopNav";
 
 export function App() {
   return (
     <LearningProgressProvider>
+      <TopNav />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/learn" element={<LearnPage />} />

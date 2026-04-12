@@ -58,7 +58,12 @@ export function CompletionModal({
             <p className="next-topics-label">Suggested next topics</p>
             <div className="next-topic-actions">
               {nextTopics.map((topic) => (
-                <a key={topic.id} className="secondary-button" href={topic.href}>
+                <a
+                  key={topic.id}
+                  className="secondary-button"
+                  href={topic.href}
+                  onClick={onClose}
+                >
                   {topic.name}
                 </a>
               ))}

@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import { CompletionModal } from "../components/CompletionModal";
+import { MathContent } from "../components/MathContent";
 import { achievements, getUnlockedAchievementIds } from "../data/achievements";
 import {
   getLectureContent,
   getModuleById,
+  getModuleContent,
   getNextAccessibleModuleIds,
   leafModuleIds,
 } from "../data/sqlTree";
@@ -28,6 +30,7 @@ export function ModulePage() {
   }
 
   const lecture = getLectureContent(module.id);
+  const moduleContent = getModuleContent(module.id);
   const isLeafLecture = leafModuleIds.has(module.id) && Boolean(lecture);
   const completed = isCompleted(module.id);
   const visibleNextTopics = completed
@@ -57,7 +60,7 @@ export function ModulePage() {
           <span className={completed ? "status-pill completed-pill" : "status-pill"}>
             {completed ? "Completed 🏆" : "In progress"}
           </span>
-          <span>{module.type === "concept" ? "Theory topic" : "Applied topic"}</span>
+          <span>{module.type === "concept" ? "◧ Theory topic" : "⚙ Applied topic"}</span>
         </div>
       </section>
 
@@ -71,7 +74,7 @@ export function ModulePage() {
               className={`tab-button ${activeTab === "theory" ? "is-active" : ""}`}
               onClick={() => setActiveTab("theory")}
             >
-              Theory
+              ◧ Theory
             </button>
             <button
               type="button"
@@ -80,7 +83,7 @@ export function ModulePage() {
               className={`tab-button ${activeTab === "summary" ? "is-active" : ""}`}
               onClick={() => setActiveTab("summary")}
             >
-              Summary
+              ≡ Summary
             </button>
           </div>
 
@@ -88,32 +91,20 @@ export function ModulePage() {
             {activeTab === "theory" && (
               <div className="content-prose">
                 <h2>Theory</h2>
-                <p>{module.description}</p>
-                <p>
-                  {module.type === "concept"
-                    ? "This theory topic builds the conceptual language students need before they tackle controller decisions and practical loop evaluation."
-                    : "This applied topic focuses on using the underlying control ideas in realistic engineering judgments and course exercises."}
-                </p>
-                <p>
-                  {isLeafLecture
-                    ? "Because this topic sits at the end of the current branch, it also includes a lecture page for a more focused walkthrough."
-                    : "Use this page as a compact topic overview before continuing through the roadmap."}
-                </p>
+                <MathContent paragraphs={moduleContent?.theory ?? [module.description]} />
               </div>
             )}
 
             {activeTab === "summary" && (
               <div className="content-prose">
                 <h2>Summary</h2>
-                <p>{module.name} is part of the Process Dynamics and Control learning path.</p>
-                <p>
-                  Key takeaway: students should understand what this topic contributes to process modeling, feedback reasoning, or control performance evaluation.
-                </p>
-                <p>
-                  {isLeafLecture
-                    ? "Next step: open the lecture to review the topic in a more guided format."
-                    : "Next step: return to the roadmap and continue with the connected topics."}
-                </p>
+                <MathContent
+                  paragraphs={
+                    moduleContent?.summary ?? [
+                      `${module.name} is part of the Process Dynamics and Control learning path.`,
+                    ]
+                  }
+                />
               </div>
             )}
           </div>

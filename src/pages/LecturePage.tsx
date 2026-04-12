@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import { CompletionModal } from "../components/CompletionModal";
+import { MathContent } from "../components/MathContent";
 import { achievements, getUnlockedAchievementIds } from "../data/achievements";
 import {
   getLectureContent,
@@ -73,7 +74,7 @@ export function LecturePage() {
               className={`tab-button ${activeTab === "theory" ? "is-active" : ""}`}
               onClick={() => setActiveTab("theory")}
             >
-              Theory
+              ◧ Theory
             </button>
             <button
               type="button"
@@ -82,7 +83,7 @@ export function LecturePage() {
               className={`tab-button ${activeTab === "summary" ? "is-active" : ""}`}
               onClick={() => setActiveTab("summary")}
             >
-              Summary
+              ≡ Summary
             </button>
           </div>
 
@@ -91,20 +92,14 @@ export function LecturePage() {
               lecture.sections.map((section) => (
                 <article key={section.heading} className="content-section">
                   <h2>{section.heading}</h2>
-                  <p>{section.body}</p>
+                  <MathContent paragraphs={[section.body]} />
                 </article>
               ))}
 
             {activeTab === "summary" && (
               <div className="content-prose">
                 <h2>Summary</h2>
-                <p>{node.name} closes the current learning branch in the roadmap.</p>
-                <p>
-                  Students should leave this topic able to explain the process objective, connect the dynamics to controller reasoning, and judge control performance in practical terms.
-                </p>
-                <p>
-                  Use the roadmap to revisit supporting topics if any part of the control logic still feels unclear.
-                </p>
+                <MathContent paragraphs={lecture.summary} />
               </div>
             )}
           </div>

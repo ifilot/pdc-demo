@@ -12,6 +12,11 @@ export interface Module extends ModuleRaw {
   followUps: string[];
 }
 
+export interface ModuleContent {
+  theory: string[];
+  summary: string[];
+}
+
 export interface LectureSection {
   heading: string;
   body: string;
@@ -21,6 +26,7 @@ export interface LectureContent {
   duration: string;
   level: string;
   sections: LectureSection[];
+  summary: string[];
 }
 
 export interface Position {
@@ -266,11 +272,95 @@ const lectureContentById: Record<string, LectureContent> = {
           "Review the closed-loop response in terms of stability, speed, offset, and robustness. For chemical engineers, the best solution is rarely the fastest one; it is the one that stays reliable under realistic operating conditions.",
       },
     ],
+    summary: [
+      "A useful control strategy begins with a clean process definition, including disturbances, measurements, and manipulated variables.",
+      "For many practical loops, we connect dynamic behavior to a compact first-order-plus-dead-time view such as $G_p(s)=\\dfrac{K e^{-\\theta s}}{\\tau s + 1}$.",
+      "Final judgment comes from balancing speed, robustness, and operability rather than optimizing only one metric.",
+    ],
+  },
+};
+
+const moduleContentById: Record<string, ModuleContent> = {
+  "intro-data": {
+    theory: [
+      "Process Dynamics and Control starts with the idea that chemical processes evolve over time. Inventories, temperatures, concentrations, and pressures respond to inputs, disturbances, and initial conditions.",
+      "A dynamic variable is often described through a state balance. In compact form we can write $\\dfrac{dx}{dt}=f(x,u,d)$ where $x$ is the process state, $u$ the manipulated input, and $d$ the disturbance.",
+      "$$\\text{Accumulation} = \\text{In} - \\text{Out} + \\text{Generation} - \\text{Consumption}$$",
+    ],
+    summary: [
+      "Dynamic analysis explains how process variables move over time rather than only where they settle.",
+      "State, input, and disturbance language gives students a foundation for later control reasoning.",
+      "Mass and energy balances are the natural starting point for many process models.",
+    ],
+  },
+  tables: {
+    theory: [
+      "Many process units can be approximated as first-order systems over a useful operating region. This gives an intuitive bridge between physics and control design.",
+      "The two most recognizable parameters are process gain $K$ and time constant $\\tau$. Together they explain how far and how fast the output responds.",
+      "$$G_p(s)=\\frac{K}{\\tau s + 1}$$",
+    ],
+    summary: [
+      "First-order models are simple enough to reason with and rich enough to guide controller choices.",
+      "Gain captures sensitivity and the time constant captures response speed.",
+      "These models are often the first approximation before dead time and higher-order effects are added.",
+    ],
+  },
+  "query-basics": {
+    theory: [
+      "Feedback control compares a measured process variable to a target and acts on the process to reduce the error.",
+      "A standard loop uses the error $e(t)=r(t)-y(t)$ where $r(t)$ is the setpoint and $y(t)$ is the measured output.",
+      "$$u(t)=K_c e(t)$$",
+    ],
+    summary: [
+      "Feedback organizes measurement, decision, and action into one loop.",
+      "Controlled, measured, and manipulated variables should always be named clearly.",
+      "Error-based thinking prepares students for tuning and performance assessment.",
+    ],
+  },
+  "select-rows": {
+    theory: [
+      "Controller tuning is the practical task of choosing parameters that deliver acceptable speed, stability, and robustness.",
+      "Even when a formal rule is used, the engineer still judges the operating context, actuator limits, and disturbance environment.",
+      "A common proportional-integral-derivative form is $$u(t)=K_c\\left(e(t)+\\frac{1}{\\tau_I}\\int e(t)dt + \\tau_D \\frac{de}{dt}\\right).$$",
+    ],
+    summary: [
+      "Tuning is not only a formula exercise; it is an engineering tradeoff.",
+      "Good tuning respects both the process dynamics and the operating risks.",
+      "PID parameters should be interpreted in terms of what behavior they encourage.",
+    ],
+  },
+  "combine-data": {
+    theory: [
+      "Closed-loop performance is judged through metrics such as overshoot, settling time, oscillation, offset, and disturbance rejection.",
+      "A loop may be fast but fragile, or robust but sluggish. Performance always has to be interpreted in context.",
+      "For setpoint tracking we often discuss the transient response of $y(t)$ and whether it remains acceptable for plant operation and safety.",
+    ],
+    summary: [
+      "Performance metrics translate raw responses into operational judgment.",
+      "A useful controller is stable, understandable, and appropriate for the process objective.",
+      "Engineers should evaluate both setpoint tracking and disturbance rejection.",
+    ],
+  },
+  "final-project": {
+    theory: [
+      "This final placeholder topic combines process modeling, feedback logic, and performance evaluation into one compact review.",
+      "Students should be able to interpret a model, reason about a loop structure, and defend a practical control decision.",
+      "$$\\text{Good control} = \\text{model insight} + \\text{loop reasoning} + \\text{operational judgment}$$",
+    ],
+    summary: [
+      "The final review pulls together the main language of Process Dynamics and Control.",
+      "Students should be able to move from process description to controller reasoning with confidence.",
+      "The most important habit is not memorization but disciplined interpretation of process behavior.",
+    ],
   },
 };
 
 export function getLectureContent(moduleId: string) {
   return lectureContentById[moduleId];
+}
+
+export function getModuleContent(moduleId: string) {
+  return moduleContentById[moduleId];
 }
 
 export function getPrerequisites(moduleId: string, visited = new Set<string>()) {

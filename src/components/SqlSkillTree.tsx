@@ -108,7 +108,7 @@ export function CourseRoadmap() {
   }
 
   return (
-    <div className="course-tree-shell">
+    <div className={`course-tree-shell ${hoveredId ? "is-hovering" : ""}`}>
       <TransformWrapper
         initialScale={1}
         minScale={0.35}
@@ -138,11 +138,11 @@ export function CourseRoadmap() {
 
             <div className="tree-legend">
               <div className="legend-item">
-                <span className="legend-card concept" />
+                <span className="legend-card concept">◧</span>
                 Theory topic
               </div>
               <div className="legend-item">
-                <span className="legend-card skill" />
+                <span className="legend-card skill">⚙</span>
                 Applied topic
               </div>
               <div className="legend-item">
@@ -153,7 +153,13 @@ export function CourseRoadmap() {
 
             <TransformComponent
               wrapperStyle={{ width: "100%", height: "100%" }}
-              contentStyle={{ width: "100%", height: "100%" }}
+              contentStyle={{
+                width: "100%",
+                minHeight: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "flex-start",
+              }}
             >
               <div
                 className="tree-stage"
@@ -220,7 +226,7 @@ export function CourseRoadmap() {
                         goTo(`/module/${module.id}`);
                       }}
                     >
-                      <span className="node-badge">{module.type === "concept" ? "T" : "A"}</span>
+                      <span className="node-badge">{module.type === "concept" ? "◧" : "⚙"}</span>
                       {completed && <span className="node-check">✓</span>}
                       <span className="node-title">{module.name}</span>
                       <span className="node-hint">
