@@ -1,6 +1,7 @@
 import { type ChangeEvent, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faCircleInfo,
   faBookOpen,
   faDownload,
   faFileArrowUp,
@@ -17,6 +18,7 @@ import { useLearningProgress } from "../hooks/useLearningProgress";
 
 const navItems = [
   { to: "/", label: "Home", icon: faHouse },
+  { to: "/about", label: "About", icon: faCircleInfo },
   { to: "/learning-goals", label: "Learning goals", icon: faGraduationCap },
   { to: "/progress", label: "Progress", icon: faTrophy },
   { to: "/prerequisites", label: "Prerequisites", icon: faListCheck },
@@ -98,6 +100,17 @@ export function TopNav() {
                   <FontAwesomeIcon icon={faHouse} />
                 </span>
                 Home
+              </Link>
+              <Link
+                className="top-nav-menu-item"
+                to="/about"
+                role="menuitem"
+                onClick={() => setMenuOpen(false)}
+              >
+                <span className="top-nav-menu-icon" aria-hidden="true">
+                  <FontAwesomeIcon icon={faCircleInfo} />
+                </span>
+                About
               </Link>
               <Link
                 className="top-nav-menu-item"

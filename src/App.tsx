@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { HomePage } from "./pages/HomePage";
+import { AboutPage } from "./pages/AboutPage";
 import { LecturePage } from "./pages/LecturePage";
 import { ModulePage } from "./pages/ModulePage";
 import { LearnPage } from "./pages/LearnPage";
@@ -17,6 +18,7 @@ export function App() {
       <TopNav />
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
         <Route path="/learning-goals" element={<LearningGoalsPage />} />
         <Route path="/progress" element={<ProgressPage />} />
         <Route path="/prerequisites" element={<PrerequisitesPage />} />
