@@ -26,6 +26,14 @@ export function CompletionModal({
         aria-labelledby="completion-title"
         onClick={(event) => event.stopPropagation()}
       >
+        <button
+          type="button"
+          className="modal-close-button"
+          aria-label="Close completion modal"
+          onClick={onClose}
+        >
+          ×
+        </button>
         <div className="celebration-ornaments" aria-hidden="true">
           <span className="spark spark-1" />
           <span className="spark spark-2" />
@@ -70,11 +78,6 @@ export function CompletionModal({
             </div>
           </div>
         )}
-        <div className="modal-actions">
-          <button type="button" className="primary-button" onClick={onClose}>
-            Continue learning
-          </button>
-        </div>
       </section>
     </div>
   );

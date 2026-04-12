@@ -1,24 +1,33 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import { CompletionModal } from "../components/CompletionModal";
-import { MathContent } from "../components/MathContent";
+import { RichContent } from "../components/RichContent";
 import { achievements, getUnlockedAchievementIds } from "../data/achievements";
 import {
   getLectureContent,
   getModuleById,
   getModuleContent,
   getNextAccessibleModuleIds,
+  isQuestionAnswerCorrect,
   leafModuleIds,
 } from "../data/sqlTree";
 import { useLearningProgress } from "../hooks/useLearningProgress";
 
 export function ModulePage() {
   const { moduleId } = useParams<{ moduleId: string }>();
-  const { completedIds, isCompleted, toggleCompleted } = useLearningProgress();
-  const [activeTab, setActiveTab] = useState<"theory" | "summary">("theory");
+  const {
+    completedIds,
+    isCompleted,
+    toggleCompleted,
+    getQuestionAnswer,
+    setQuestionAnswer,
+  } = useLearningProgress();
+  const [activeTab, setActiveTab] = useState<"theory" | "checkpoint" | "summary">("theory");
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [newAchievementTitle, setNewAchievementTitle] = useState<string | null>(null);
   const [nextTopics, setNextTopics] = useState<{ id: string; name: string; href: string }[]>([]);
+  const [questionStatus, setQuestionStatus] = useState<Record<string, "correct" | "incorrect">>({});
+  const [hasCheckedAnswers, setHasCheckedAnswers] = useState(false);
 
   if (!moduleId) {
     return <Navigate to="/" replace />;
@@ -33,6 +42,10 @@ export function ModulePage() {
   const moduleContent = getModuleContent(module.id);
   const isLeafLecture = leafModuleIds.has(module.id) && Boolean(lecture);
   const completed = isCompleted(module.id);
+  const questions = moduleContent?.questions ?? [];
+  const allQuestionsAnswered = questions.every((question) => getQuestionAnswer(question.id).trim().length > 0);
+  const allQuestionsCorrect =
+    questions.length === 0 || questions.every((question) => questionStatus[question.id] === "correct");
   const visibleNextTopics = completed
     ? getNextAccessibleModuleIds(completedIds, module.id).map((id) => {
         const nextModule = getModuleById(id)!;
@@ -44,6 +57,55 @@ export function ModulePage() {
         };
       })
     : [];
+
+  useEffect(() => {
+    setActiveTab("theory");
+    setQuestionStatus({});
+    setHasCheckedAnswers(false);
+  }, [module.id]);
+
+  function handleCheckAnswers() {
+    const nextStatus = Object.fromEntries(
+      questions.map((question) => [
+        question.id,
+        isQuestionAnswerCorrect(question, getQuestionAnswer(question.id)) ? "correct" : "incorrect",
+      ]),
+    ) as Record<string, "correct" | "incorrect">;
+
+    setQuestionStatus(nextStatus);
+    setHasCheckedAnswers(true);
+  }
+
+  function handleToggleCompleted() {
+    if (!completed && questions.length > 0 && !allQuestionsCorrect) {
+      return;
+    }
+    if (!completed) {
+      const nextCompletedIds = [...completedIds, module.id];
+      const currentAchievements = new Set(getUnlockedAchievementIds(completedIds));
+      const nextAchievementId = getUnlockedAchievementIds(nextCompletedIds).find(
+        (id) => !currentAchievements.has(id),
+      );
+      const suggestedNextTopics = getNextAccessibleModuleIds(nextCompletedIds, module.id).map((id) => {
+        const nextModule = getModuleById(id)!;
+        const isLecture = leafModuleIds.has(id) && Boolean(getLectureContent(id));
+        return {
+          id,
+          name: nextModule.name,
+          href: `${import.meta.env.BASE_URL}#${isLecture ? `/lecture/${id}` : `/module/${id}`}`,
+        };
+      });
+      setNewAchievementTitle(
+        achievements.find((achievement) => achievement.id === nextAchievementId)?.title ?? null,
+      );
+      setNextTopics(suggestedNextTopics);
+      setShowCompletionModal(true);
+    } else {
+      setNewAchievementTitle(null);
+      setNextTopics([]);
+    }
+    toggleCompleted(module.id);
+  }
 
   return (
     <main className="page">
@@ -85,26 +147,152 @@ export function ModulePage() {
             >
               ≡ Summary
             </button>
+            {questions.length > 0 && (
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activeTab === "checkpoint"}
+                className={`tab-button ${activeTab === "checkpoint" ? "is-active" : ""}`}
+                onClick={() => setActiveTab("checkpoint")}
+              >
+                ✓ Checkpoint
+              </button>
+            )}
           </div>
 
           <div className="tab-content">
             {activeTab === "theory" && (
               <div className="content-prose">
                 <h2>Theory</h2>
-                <MathContent paragraphs={moduleContent?.theory ?? [module.description]} />
+                <RichContent
+                  blocks={moduleContent?.theory ?? [{ type: "paragraph", text: module.description }]}
+                />
+                {questions.length > 0 && (
+                  <div className="theory-next-action">
+                    <button
+                      type="button"
+                      className="secondary-button"
+                      onClick={() => setActiveTab("summary")}
+                    >
+                      Go to Summary
+                    </button>
+                    <button
+                      type="button"
+                      className="secondary-button"
+                      onClick={() => setActiveTab("checkpoint")}
+                    >
+                      Go to Questions
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
             {activeTab === "summary" && (
               <div className="content-prose">
                 <h2>Summary</h2>
-                <MathContent
-                  paragraphs={
+                <RichContent
+                  blocks={
                     moduleContent?.summary ?? [
-                      `${module.name} is part of the Process Dynamics and Control learning path.`,
+                      {
+                        type: "paragraph",
+                        text: `${module.name} is part of the Process Dynamics and Control learning path.`,
+                      },
                     ]
                   }
                 />
+                {questions.length > 0 && (
+                  <div className="theory-next-action">
+                    <button
+                      type="button"
+                      className="secondary-button"
+                      onClick={() => setActiveTab("checkpoint")}
+                    >
+                      Go to Questions
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === "checkpoint" && questions.length > 0 && (
+              <div className="question-panel">
+                <div className="panel-heading">
+                  <div>
+                    <p className="eyebrow">Checkpoint</p>
+                    <h2>Answer before completing</h2>
+                  </div>
+                  <p className="panel-copy">
+                    Fill in these short reflections to mark this module as complete.
+                  </p>
+                </div>
+                <div className="question-list">
+                  {questions.map((question, index) => (
+                    <article key={question.id} className="question-card">
+                      <label className="question-label" htmlFor={question.id}>
+                        {index + 1}. {question.prompt}
+                      </label>
+                      {question.helpText && <p className="question-help">{question.helpText}</p>}
+                      <textarea
+                        id={question.id}
+                        className={`question-input ${
+                          questionStatus[question.id] ? `is-${questionStatus[question.id]}` : ""
+                        }`}
+                        rows={4}
+                        value={getQuestionAnswer(question.id)}
+                        placeholder={question.placeholder}
+                        onChange={(event) => {
+                          setQuestionAnswer(question.id, event.target.value);
+                          setQuestionStatus((currentStatus) => {
+                            if (!currentStatus[question.id]) {
+                              return currentStatus;
+                            }
+                            const nextStatus = { ...currentStatus };
+                            delete nextStatus[question.id];
+                            return nextStatus;
+                          });
+                          setHasCheckedAnswers(false);
+                        }}
+                      />
+                      {questionStatus[question.id] === "correct" && (
+                        <p className="question-feedback is-correct">Answer looks good.</p>
+                      )}
+                      {questionStatus[question.id] === "incorrect" && (
+                        <p className="question-feedback is-incorrect">Hint: {question.hint}</p>
+                      )}
+                    </article>
+                  ))}
+                </div>
+                <div className="question-actions">
+                  <button
+                    type="button"
+                    className="secondary-button"
+                    disabled={!allQuestionsAnswered}
+                    onClick={handleCheckAnswers}
+                  >
+                    Check answers
+                  </button>
+                  <button
+                    type="button"
+                    className={`secondary-button ${
+                      !completed && questions.length > 0 && allQuestionsCorrect
+                        ? "completion-button-ready"
+                        : ""
+                    }`}
+                    disabled={!completed && questions.length > 0 && !allQuestionsCorrect}
+                    onClick={handleToggleCompleted}
+                  >
+                    {completed ? "Mark as incomplete" : "Mark as complete"}
+                  </button>
+                  {hasCheckedAnswers && allQuestionsCorrect && (
+                    <p className="question-summary is-correct">All checkpoint answers are correct.</p>
+                  )}
+                  {hasCheckedAnswers && !allQuestionsCorrect && (
+                    <p className="question-summary is-incorrect">
+                      Some answers still need work. Use the hints and try again.
+                    </p>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -112,45 +300,24 @@ export function ModulePage() {
       </section>
 
       <section className="lecture-actions">
-        <button
-          type="button"
-          className="secondary-button"
-          onClick={() => {
-            if (!completed) {
-              const nextCompletedIds = [...completedIds, module.id];
-              const currentAchievements = new Set(getUnlockedAchievementIds(completedIds));
-              const nextAchievementId = getUnlockedAchievementIds(nextCompletedIds).find(
-                (id) => !currentAchievements.has(id),
-              );
-              const suggestedNextTopics = getNextAccessibleModuleIds(nextCompletedIds, module.id).map((id) => {
-                const nextModule = getModuleById(id)!;
-                const isLecture = leafModuleIds.has(id) && Boolean(getLectureContent(id));
-                return {
-                  id,
-                  name: nextModule.name,
-                  href: `${import.meta.env.BASE_URL}#${isLecture ? `/lecture/${id}` : `/module/${id}`}`,
-                };
-              });
-              setNewAchievementTitle(
-                achievements.find((achievement) => achievement.id === nextAchievementId)?.title ?? null,
-              );
-              setNextTopics(suggestedNextTopics);
-              setShowCompletionModal(true);
-            } else {
-              setNewAchievementTitle(null);
-              setNextTopics([]);
-            }
-            toggleCompleted(module.id);
-          }}
-        >
-          {completed ? "Mark as incomplete" : "Mark as complete"}
-        </button>
         {isLeafLecture && (
           <a className="primary-button" href={`${import.meta.env.BASE_URL}#/lecture/${module.id}`}>
             Open lecture
           </a>
         )}
       </section>
+
+      {!completed && questions.length > 0 && !allQuestionsAnswered && (
+        <p className="completion-note">
+          Complete all checkpoint answers before checking them.
+        </p>
+      )}
+
+      {!completed && questions.length > 0 && allQuestionsAnswered && !allQuestionsCorrect && (
+        <p className="completion-note">
+          Use the check button and correct any flagged answers before this topic can be marked as complete.
+        </p>
+      )}
 
       {visibleNextTopics.length > 0 && (
         <section className="panel next-topics-panel">

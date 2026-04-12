@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import { CompletionModal } from "../components/CompletionModal";
-import { MathContent } from "../components/MathContent";
+import { RichContent } from "../components/RichContent";
 import { achievements, getUnlockedAchievementIds } from "../data/achievements";
 import {
   getLectureContent,
@@ -92,14 +92,14 @@ export function LecturePage() {
               lecture.sections.map((section) => (
                 <article key={section.heading} className="content-section">
                   <h2>{section.heading}</h2>
-                  <MathContent paragraphs={[section.body]} />
+                  <RichContent blocks={section.body} />
                 </article>
               ))}
 
             {activeTab === "summary" && (
               <div className="content-prose">
                 <h2>Summary</h2>
-                <MathContent paragraphs={lecture.summary} />
+                <RichContent blocks={lecture.summary} />
               </div>
             )}
           </div>

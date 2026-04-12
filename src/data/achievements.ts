@@ -8,23 +8,43 @@ export interface Achievement {
 
 export const achievements: Achievement[] = [
   {
-    id: "first-principles",
-    title: "First Principles",
+    id: "steady-state-starter",
+    title: "Steady-State Starter",
     description: "Complete your first topic in the roadmap.",
   },
   {
-    id: "steady-progress",
-    title: "Steady Progress",
-    description: "Complete any three topics in the course.",
+    id: "transient-explorer",
+    title: "Transient Explorer",
+    description: "Complete any two topics in the course.",
   },
   {
-    id: "applied-thinker",
-    title: "Applied Thinker",
-    description: "Complete both applied topics in the current roadmap.",
+    id: "loop-tuner",
+    title: "Loop Tuner",
+    description: "Complete the Controller Tuning topic.",
   },
   {
-    id: "roadmap-complete",
-    title: "Roadmap Complete",
+    id: "disturbance-detective",
+    title: "Disturbance Detective",
+    description: "Complete the Closed-Loop Performance topic.",
+  },
+  {
+    id: "stability-scout",
+    title: "Stability Scout",
+    description: "Complete the Feedback Control Concepts topic.",
+  },
+  {
+    id: "reactor-whisperer",
+    title: "Reactor Whisperer",
+    description: "Complete any four topics in the roadmap.",
+  },
+  {
+    id: "process-guardian",
+    title: "Process Guardian",
+    description: "Complete all applied topics in the current roadmap.",
+  },
+  {
+    id: "chemical-control-champion",
+    title: "Chemical Control Champion",
     description: "Complete every topic in the roadmap.",
   },
 ];
@@ -34,19 +54,39 @@ export function getUnlockedAchievementIds(completedIds: string[]) {
   const unlocked: string[] = [];
 
   if (completedIds.length >= 1) {
-    unlocked.push("first-principles");
+    unlocked.push("steady-state-starter");
   }
 
-  if (completedIds.length >= 3) {
-    unlocked.push("steady-progress");
+  if (completedIds.length >= 2) {
+    unlocked.push("transient-explorer");
   }
 
-  if (completed.has("select-rows") && completed.has("combine-data")) {
-    unlocked.push("applied-thinker");
+  if (completed.has("select-rows")) {
+    unlocked.push("loop-tuner");
+  }
+
+  if (completed.has("combine-data")) {
+    unlocked.push("disturbance-detective");
+  }
+
+  if (completed.has("query-basics")) {
+    unlocked.push("stability-scout");
+  }
+
+  if (completedIds.length >= 4) {
+    unlocked.push("reactor-whisperer");
+  }
+
+  const appliedTopicIds = moduleList
+    .filter((module) => module.type === "skill")
+    .map((module) => module.id);
+
+  if (appliedTopicIds.every((id) => completed.has(id))) {
+    unlocked.push("process-guardian");
   }
 
   if (moduleList.every((module) => completed.has(module.id))) {
-    unlocked.push("roadmap-complete");
+    unlocked.push("chemical-control-champion");
   }
 
   return unlocked;
