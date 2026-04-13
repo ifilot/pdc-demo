@@ -14,6 +14,11 @@ export function RichContent({ blocks }: { blocks: ContentBlock[] }) {
           return <MathParagraph key={index} text={block.text} />;
         }
 
+        if (block.type === "heading") {
+          const HeadingTag = `h${block.level}` as const;
+          return <HeadingTag key={index}>{block.text}</HeadingTag>;
+        }
+
         return (
           <Suspense
             key={index}

@@ -3,13 +3,19 @@ export interface TextBlock {
   text: string;
 }
 
+export interface HeadingBlock {
+  type: "heading";
+  text: string;
+  level: 1 | 2 | 3 | 4 | 5 | 6;
+}
+
 export interface PythonBlock {
   type: "python";
   code: string;
   caption?: string;
 }
 
-export type ContentBlock = TextBlock | PythonBlock;
+export type ContentBlock = TextBlock | HeadingBlock | PythonBlock;
 
 export interface ModuleQuestion {
   id: string;

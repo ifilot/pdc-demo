@@ -57,7 +57,12 @@ export function TopNav() {
     <header className="top-nav">
       <div className="top-nav-inner">
         <Link className="top-nav-brand" to="/">
-          <img className="top-nav-brand-mark" src="/favicon.svg" alt="" aria-hidden="true" />
+          <img
+            className="top-nav-brand-mark"
+            src={`${import.meta.env.BASE_URL}favicon.svg`}
+            alt=""
+            aria-hidden="true"
+          />
           Process Dynamics and Control
         </Link>
 

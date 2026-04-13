@@ -55,11 +55,25 @@ const moduleIndexRaw: ModuleRaw[] = [
     ],
   },
   {
+    id: "modeling-principles",
+    name: "Mathematical Modelling Principles",
+    type: "concept",
+    description:
+      "Use balances, assumptions, linearization, and numerical methods to relate process physics to dynamic behavior.",
+    prerequisites: ["intro-data"],
+    learningGoalIds: [
+      "interpret-dynamic-process-behavior",
+      "work-with-simple-dynamic-models",
+      "bridge-theory-and-practice",
+      "communicate-control-problems-clearly",
+    ],
+  },
+  {
     id: "tables",
     name: "First-Order Process Models",
     type: "concept",
     description: "Build intuition for gains, time constants, and process response.",
-    prerequisites: ["intro-data"],
+    prerequisites: ["modeling-principles"],
     learningGoalIds: [
       "interpret-dynamic-process-behavior",
       "work-with-simple-dynamic-models",
@@ -139,6 +153,7 @@ const y1 = margin + cardHeight / 2;
 const y2 = y1 + dy;
 const y3 = y2 + dy;
 const y4 = y3 + dy;
+const y5 = y4 + dy;
 
 const dx = cardWidth * 1.7;
 const x1 = margin + cardWidth / 2;
@@ -147,11 +162,12 @@ const x3 = x2 + dx;
 
 const positionsRaw: Record<string, Position> = {
   "intro-data": { x: x2, y: y1 },
-  tables: { x: x2, y: y2 },
-  "query-basics": { x: x2, y: y3 },
-  "select-rows": { x: x1, y: y4 },
-  "combine-data": { x: x3, y: y4 },
-  "final-project": { x: x2, y: y4 + dy },
+  "modeling-principles": { x: x2, y: y2 },
+  tables: { x: x2, y: y3 },
+  "query-basics": { x: x2, y: y4 },
+  "select-rows": { x: x1, y: y5 },
+  "combine-data": { x: x3, y: y5 },
+  "final-project": { x: x2, y: y5 + dy },
 };
 
 function angleFromVertical(dxValue: number, dyValue: number) {
@@ -276,7 +292,7 @@ export const connectors: Connector[] = Object.values(positionedModules).flatMap(
 
 export const treeBounds = {
   width: x3 + cardWidth / 2 + margin + 80,
-  height: y4 + dy + cardHeight / 2 + margin + 80,
+  height: y5 + dy + cardHeight / 2 + margin + 80,
 };
 
 export const learningGoals: LearningGoal[] = [

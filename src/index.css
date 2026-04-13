@@ -840,6 +840,45 @@ h2 {
   margin-bottom: 12px;
 }
 
+.content-prose h1,
+.content-section h1,
+.content-prose h3,
+.content-section h3,
+.content-prose h4,
+.content-section h4,
+.content-prose h5,
+.content-section h5,
+.content-prose h6,
+.content-section h6 {
+  margin: 24px 0 12px;
+  color: var(--text-strong);
+  line-height: 1.25;
+}
+
+.content-prose h1:first-child,
+.content-prose h2:first-child,
+.content-prose h3:first-child,
+.content-prose h4:first-child,
+.content-prose h5:first-child,
+.content-prose h6:first-child {
+  margin-top: 0;
+}
+
+.content-prose h1,
+.content-section h1 {
+  font-size: clamp(1.9rem, 3vw, 2.5rem);
+}
+
+.content-prose h2,
+.content-section h2 {
+  font-size: clamp(1.35rem, 2vw, 1.7rem);
+}
+
+.content-prose h3,
+.content-section h3 {
+  font-size: clamp(1.15rem, 1.6vw, 1.3rem);
+}
+
 .content-prose p,
 .content-section p {
   max-width: none;
