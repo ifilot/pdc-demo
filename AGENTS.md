@@ -35,27 +35,27 @@ src/
     sqlTree.ts
     moduleContentRegistry.ts
   modules/
-    01_intro-data/
+    01_introduction-to-process-control/
       theory.md
       summary.md
       checkpoint.ts
-    02_tables/
+    02_first-order-process-models/
       theory.md
       summary.md
       checkpoint.ts
-    03_query-basics/
+    03_feedback-control-concepts/
       theory.md
       summary.md
       checkpoint.ts
 ```
 
-Use the stable module ID in the folder name, prefixed with ordering for readability:
+Use the module title as a readable slug in the folder name, prefixed with ordering for readability:
 
-- `01_intro-data`
-- `02_tables`
-- `03_query-basics`
+- `01_introduction-to-process-control`
+- `02_first-order-process-models`
+- `03_feedback-control-concepts`
 
-Prefer stable IDs over display titles in filenames and folder names.
+Keep the stable module ID in `sqlTree.ts`, but use title-based folder names in `src/modules/` so authors can recognize modules at a glance.
 
 ## File Responsibilities
 
@@ -126,9 +126,9 @@ That registry should:
 Example pattern:
 
 ```ts
-import introTheory from "../modules/01_intro-data/theory.md?raw";
-import introSummary from "../modules/01_intro-data/summary.md?raw";
-import introCheckpoint from "../modules/01_intro-data/checkpoint";
+import introTheory from "../modules/01_introduction-to-process-control/theory.md?raw";
+import introSummary from "../modules/01_introduction-to-process-control/summary.md?raw";
+import introCheckpoint from "../modules/01_introduction-to-process-control/checkpoint";
 ```
 
 This is preferred over storing raw string file paths in `sqlTree.ts`.
@@ -136,7 +136,7 @@ This is preferred over storing raw string file paths in `sqlTree.ts`.
 Do not make `sqlTree.ts` manually reference fragile filesystem strings like:
 
 ```ts
-theoryFile: "src/modules/01_intro-data/theory.md"
+theoryFile: "src/modules/01_introduction-to-process-control/theory.md"
 ```
 
 Prefer import-backed registries because they are safer, type-checkable, and easier to refactor.
@@ -193,7 +193,7 @@ When adding or editing a module:
 When adding a new module folder:
 
 - use the ordering prefix
-- use the stable module ID
+- use a readable slug derived from the module title
 - keep filenames exactly:
   - `theory.md`
   - `summary.md`
@@ -204,7 +204,7 @@ When adding a new module folder:
 - Do not reintroduce a lecture/module split.
 - Do not place long educational prose back into `sqlTree.ts` if a per-module file exists.
 - Do not duplicate module content across page components.
-- Do not use module display titles as primary file identifiers.
+- Do not use opaque internal IDs as folder names when a readable title slug is available.
 - Do not invent ad hoc folder/file naming patterns for new modules.
 
 ## Safe Change Guidance
