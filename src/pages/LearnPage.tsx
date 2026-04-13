@@ -14,7 +14,8 @@ export function LearnPage() {
         <h1>Process Dynamics and Control roadmap</h1>
         <p className="hero-copy">
           Follow the prerequisite structure from process fundamentals to applied control topics.
-          Terminal nodes open lecture pages for focused review.
+          Every node opens a module with theory, summary, checkpoint questions, and linked learning
+          goals.
         </p>
         <div className="landing-actions">
           <Link className="secondary-button" to="/">

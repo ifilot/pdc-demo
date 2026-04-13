@@ -4,10 +4,8 @@ import {
   cardHeight,
   cardWidth,
   connectors,
-  getLectureContent,
   getModuleById,
   getPrerequisites,
-  leafModuleIds,
   moduleList,
   positionedModules,
   treeBounds,
@@ -88,7 +86,6 @@ function getNodeClassNames({
     isHovered ? "is-hovered" : "",
     isPrerequisite ? "is-prerequisite" : "",
     isSomethingHovered && !isHovered && !isPrerequisite ? "is-dimmed" : "",
-    leafModuleIds.has(module.id) && getLectureContent(module.id) ? "is-clickable" : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -195,8 +192,6 @@ export function CourseRoadmap() {
 
                 {moduleList.map((module) => {
                   const positionedModule = positionedModules[module.id];
-                  const lecture = getLectureContent(module.id);
-                  const isLeafLecture = leafModuleIds.has(module.id) && Boolean(lecture);
                   const completed = isCompleted(module.id);
 
                   return (
@@ -218,20 +213,12 @@ export function CourseRoadmap() {
                       }}
                       onMouseEnter={() => setHoveredId(module.id)}
                       onMouseLeave={() => setHoveredId(null)}
-                      onClick={() => {
-                        if (isLeafLecture) {
-                          goTo(`/lecture/${module.id}`);
-                          return;
-                        }
-                        goTo(`/module/${module.id}`);
-                      }}
+                      onClick={() => goTo(`/module/${module.id}`)}
                     >
                       <span className="node-badge">{module.type === "concept" ? "◧" : "⚙"}</span>
                       {completed && <span className="node-check">✓</span>}
                       <span className="node-title">{module.name}</span>
-                      <span className="node-hint">
-                        {isLeafLecture ? "Open lecture" : module.description}
-                      </span>
+                      <span className="node-hint">{module.description}</span>
                     </button>
                   );
                 })}

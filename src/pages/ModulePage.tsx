@@ -4,12 +4,11 @@ import { CompletionModal } from "../components/CompletionModal";
 import { RichContent } from "../components/RichContent";
 import { achievements, getUnlockedAchievementIds } from "../data/achievements";
 import {
-  getLectureContent,
   getModuleById,
   getModuleContent,
+  getLearningGoalsForModule,
   getNextAccessibleModuleIds,
   isQuestionAnswerCorrect,
-  leafModuleIds,
 } from "../data/sqlTree";
 import { useLearningProgress } from "../hooks/useLearningProgress";
 
@@ -38,9 +37,8 @@ export function ModulePage() {
     return <Navigate to="/" replace />;
   }
 
-  const lecture = getLectureContent(module.id);
   const moduleContent = getModuleContent(module.id);
-  const isLeafLecture = leafModuleIds.has(module.id) && Boolean(lecture);
+  const learningGoals = getLearningGoalsForModule(module.id);
   const completed = isCompleted(module.id);
   const questions = moduleContent?.questions ?? [];
   const allQuestionsAnswered = questions.every((question) => getQuestionAnswer(question.id).trim().length > 0);
@@ -49,11 +47,10 @@ export function ModulePage() {
   const visibleNextTopics = completed
     ? getNextAccessibleModuleIds(completedIds, module.id).map((id) => {
         const nextModule = getModuleById(id)!;
-        const isLecture = leafModuleIds.has(id) && Boolean(getLectureContent(id));
         return {
           id,
           name: nextModule.name,
-          href: `${import.meta.env.BASE_URL}#${isLecture ? `/lecture/${id}` : `/module/${id}`}`,
+          href: `${import.meta.env.BASE_URL}#/module/${id}`,
         };
       })
     : [];
@@ -88,11 +85,10 @@ export function ModulePage() {
       );
       const suggestedNextTopics = getNextAccessibleModuleIds(nextCompletedIds, module.id).map((id) => {
         const nextModule = getModuleById(id)!;
-        const isLecture = leafModuleIds.has(id) && Boolean(getLectureContent(id));
         return {
           id,
           name: nextModule.name,
-          href: `${import.meta.env.BASE_URL}#${isLecture ? `/lecture/${id}` : `/module/${id}`}`,
+          href: `${import.meta.env.BASE_URL}#/module/${id}`,
         };
       });
       setNewAchievementTitle(
@@ -123,8 +119,31 @@ export function ModulePage() {
             {completed ? "Completed 🏆" : "In progress"}
           </span>
           <span>{module.type === "concept" ? "◧ Theory topic" : "⚙ Applied topic"}</span>
+          <span>{learningGoals.length} learning goal{learningGoals.length === 1 ? "" : "s"}</span>
         </div>
       </section>
+
+      {learningGoals.length > 0 && (
+        <section className="panel next-topics-panel">
+          <div className="panel-heading">
+            <div>
+              <p className="eyebrow">Learning Goals</p>
+              <h2>What this module supports</h2>
+            </div>
+            <p className="panel-copy">
+              This module contributes to the following course-level learning goals.
+            </p>
+          </div>
+          <div className="prereq-list">
+            {learningGoals.map((goal) => (
+              <article key={goal.id} className="prereq-card">
+                <h3>{goal.title}</h3>
+                <p>{goal.description}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="tab-shell">
         <div className="tab-panel">
@@ -297,14 +316,6 @@ export function ModulePage() {
             )}
           </div>
         </div>
-      </section>
-
-      <section className="lecture-actions">
-        {isLeafLecture && (
-          <a className="primary-button" href={`${import.meta.env.BASE_URL}#/lecture/${module.id}`}>
-            Open lecture
-          </a>
-        )}
       </section>
 
       {!completed && questions.length > 0 && !allQuestionsAnswered && (

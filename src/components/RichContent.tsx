@@ -1,5 +1,5 @@
 import { lazy, Suspense } from "react";
-import type { ContentBlock } from "../data/sqlTree";
+import type { ContentBlock } from "../types/moduleContent";
 import { MathParagraph } from "./MathContent";
 
 const PythonCodeBlock = lazy(() =>

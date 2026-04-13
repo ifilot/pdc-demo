@@ -1,7 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { HomePage } from "./pages/HomePage";
 import { AboutPage } from "./pages/AboutPage";
-import { LecturePage } from "./pages/LecturePage";
 import { ModulePage } from "./pages/ModulePage";
 import { LearnPage } from "./pages/LearnPage";
 import { LearningGoalsPage } from "./pages/LearningGoalsPage";
@@ -24,7 +23,6 @@ export function App() {
         <Route path="/prerequisites" element={<PrerequisitesPage />} />
         <Route path="/learn" element={<LearnPage />} />
         <Route path="/module/:moduleId" element={<ModulePage />} />
-        <Route path="/lecture/:lectureId" element={<LecturePage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <footer className="site-footer">

@@ -49,7 +49,7 @@ export function AboutPage() {
             <h3>For learning and teaching</h3>
             <p>
               The platform is intended to work both as a student-facing course experience and as a
-              teaching support environment for modules, lectures, and open course development.
+              teaching support environment for modules, checkpoints, and open course development.
             </p>
           </article>
         </div>
@@ -92,8 +92,8 @@ export function AboutPage() {
             <h3>Course direction</h3>
             <p>
               This platform is evolving into a Process Dynamics and Control environment, so the
-              current structure can grow further into lectures, checkpoints, achievements, and
-              topic-based navigation tailored to the course.
+              current structure can grow further into richer modules, checkpoints, achievements,
+              and topic-based navigation tailored to the course.
             </p>
           </article>
         </div>

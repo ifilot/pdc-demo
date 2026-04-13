@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { learningGoals } from "../data/sqlTree";
 
 export function LearningGoalsPage() {
   return (
@@ -29,27 +30,12 @@ export function LearningGoalsPage() {
           </p>
         </div>
         <div className="prereq-list">
-          <article className="prereq-card">
-            <h3>Interpret dynamic process behavior</h3>
-            <p>
-              Understand why process variables respond over time, recognize common transient
-              patterns, and explain what those responses mean for physical systems.
-            </p>
-          </article>
-          <article className="prereq-card">
-            <h3>Work with simple dynamic models</h3>
-            <p>
-              Relate first-principles thinking and simple model forms to process behavior, time
-              constants, gains, and delays that appear in control analysis.
-            </p>
-          </article>
-          <article className="prereq-card">
-            <h3>Reason about feedback control</h3>
-            <p>
-              Explain the role of feedback, compare controller actions, and judge how control
-              choices influence disturbance rejection and setpoint tracking.
-            </p>
-          </article>
+          {learningGoals.slice(0, 3).map((goal) => (
+            <article key={goal.id} className="prereq-card">
+              <h3>{goal.title}</h3>
+              <p>{goal.description}</p>
+            </article>
+          ))}
         </div>
       </section>
 
@@ -65,27 +51,12 @@ export function LearningGoalsPage() {
           </p>
         </div>
         <div className="prereq-list">
-          <article className="prereq-card">
-            <h3>Communicate clearly about control problems</h3>
-            <p>
-              Describe process-control issues using the right vocabulary and connect engineering
-              observations to model-based explanations.
-            </p>
-          </article>
-          <article className="prereq-card">
-            <h3>Approach tuning and performance more thoughtfully</h3>
-            <p>
-              Build the intuition needed to judge whether a loop is sluggish, oscillatory, robust,
-              or sensitive, and what adjustments might improve it.
-            </p>
-          </article>
-          <article className="prereq-card">
-            <h3>Bridge theory and chemical engineering practice</h3>
-            <p>
-              Connect equations and diagrams to practical decisions in reactors, separators, heat
-              exchangers, and other process systems.
-            </p>
-          </article>
+          {learningGoals.slice(3).map((goal) => (
+            <article key={goal.id} className="prereq-card">
+              <h3>{goal.title}</h3>
+              <p>{goal.description}</p>
+            </article>
+          ))}
         </div>
       </section>
     </main>

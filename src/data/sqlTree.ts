@@ -1,3 +1,12 @@
+import {
+  getModuleContent as getRegisteredModuleContent,
+  isQuestionAnswerCorrect,
+  validQuestionIds,
+} from "./moduleContentRegistry";
+import type { ModuleContent } from "../types/moduleContent";
+
+export { isQuestionAnswerCorrect, validQuestionIds } from "./moduleContentRegistry";
+
 export type ModuleType = "concept" | "skill";
 
 interface ModuleRaw {
@@ -6,50 +15,17 @@ interface ModuleRaw {
   type: ModuleType;
   description: string;
   prerequisites: string[];
+  learningGoalIds: string[];
 }
 
 export interface Module extends ModuleRaw {
   followUps: string[];
 }
 
-export interface ModuleContent {
-  theory: ContentBlock[];
-  summary: ContentBlock[];
-  questions?: ModuleQuestion[];
-}
-
-export interface LectureSection {
-  heading: string;
-  body: ContentBlock[];
-}
-
-export interface LectureContent {
-  duration: string;
-  level: string;
-  sections: LectureSection[];
-  summary: ContentBlock[];
-}
-
-export interface TextBlock {
-  type: "paragraph";
-  text: string;
-}
-
-export interface PythonBlock {
-  type: "python";
-  code: string;
-  caption?: string;
-}
-
-export type ContentBlock = TextBlock | PythonBlock;
-
-export interface ModuleQuestion {
+export interface LearningGoal {
   id: string;
-  prompt: string;
-  placeholder: string;
-  helpText?: string;
-  acceptedKeywords: string[];
-  hint: string;
+  title: string;
+  description: string;
 }
 
 export interface Position {
@@ -67,10 +43,16 @@ export interface PositionedModule {
 const moduleIndexRaw: ModuleRaw[] = [
   {
     id: "intro-data",
-    name: "Dynamic Process Foundations",
+    name: "Introduction to Process Control",
     type: "concept",
-    description: "Introduce dynamic systems, states, disturbances, and manipulated variables.",
+    description:
+      "Define process control, feedback, desired values, and the plant objectives that justify control.",
     prerequisites: [],
+    learningGoalIds: [
+      "interpret-dynamic-process-behavior",
+      "reason-about-feedback-control",
+      "communicate-control-problems-clearly",
+    ],
   },
   {
     id: "tables",
@@ -78,6 +60,11 @@ const moduleIndexRaw: ModuleRaw[] = [
     type: "concept",
     description: "Build intuition for gains, time constants, and process response.",
     prerequisites: ["intro-data"],
+    learningGoalIds: [
+      "interpret-dynamic-process-behavior",
+      "work-with-simple-dynamic-models",
+      "bridge-theory-and-practice",
+    ],
   },
   {
     id: "query-basics",
@@ -85,6 +72,11 @@ const moduleIndexRaw: ModuleRaw[] = [
     type: "concept",
     description: "Frame controlled, manipulated, and measured variables in loop design.",
     prerequisites: ["tables"],
+    learningGoalIds: [
+      "reason-about-feedback-control",
+      "communicate-control-problems-clearly",
+      "bridge-theory-and-practice",
+    ],
   },
   {
     id: "select-rows",
@@ -92,6 +84,11 @@ const moduleIndexRaw: ModuleRaw[] = [
     type: "skill",
     description: "Apply practical tuning logic for stable and responsive closed-loop behavior.",
     prerequisites: ["query-basics"],
+    learningGoalIds: [
+      "reason-about-feedback-control",
+      "approach-tuning-and-performance-thoughtfully",
+      "bridge-theory-and-practice",
+    ],
   },
   {
     id: "combine-data",
@@ -99,6 +96,11 @@ const moduleIndexRaw: ModuleRaw[] = [
     type: "skill",
     description: "Interpret overshoot, settling, robustness, and disturbance rejection.",
     prerequisites: ["query-basics"],
+    learningGoalIds: [
+      "interpret-dynamic-process-behavior",
+      "approach-tuning-and-performance-thoughtfully",
+      "bridge-theory-and-practice",
+    ],
   },
   {
     id: "final-project",
@@ -106,6 +108,13 @@ const moduleIndexRaw: ModuleRaw[] = [
     type: "skill",
     description: "Integrate the core concepts into a compact Process Dynamics and Control case review.",
     prerequisites: ["select-rows", "combine-data"],
+    learningGoalIds: [
+      "work-with-simple-dynamic-models",
+      "reason-about-feedback-control",
+      "communicate-control-problems-clearly",
+      "approach-tuning-and-performance-thoughtfully",
+      "bridge-theory-and-practice",
+    ],
   },
 ];
 
@@ -270,382 +279,62 @@ export const treeBounds = {
   height: y4 + dy + cardHeight / 2 + margin + 80,
 };
 
-export const leafModuleIds = new Set(
-  moduleList.filter((module) => module.followUps.length === 0).map((module) => module.id),
+export const learningGoals: LearningGoal[] = [
+  {
+    id: "interpret-dynamic-process-behavior",
+    title: "Interpret dynamic process behavior",
+    description:
+      "Understand why process variables respond over time, recognize common transient patterns, and explain what those responses mean for physical systems.",
+  },
+  {
+    id: "work-with-simple-dynamic-models",
+    title: "Work with simple dynamic models",
+    description:
+      "Relate first-principles thinking and simple model forms to process behavior, time constants, gains, and delays that appear in control analysis.",
+  },
+  {
+    id: "reason-about-feedback-control",
+    title: "Reason about feedback control",
+    description:
+      "Explain the role of feedback, compare controller actions, and judge how control choices influence disturbance rejection and setpoint tracking.",
+  },
+  {
+    id: "communicate-control-problems-clearly",
+    title: "Communicate clearly about control problems",
+    description:
+      "Describe process-control issues using the right vocabulary and connect engineering observations to model-based explanations.",
+  },
+  {
+    id: "approach-tuning-and-performance-thoughtfully",
+    title: "Approach tuning and performance more thoughtfully",
+    description:
+      "Build the intuition needed to judge whether a loop is sluggish, oscillatory, robust, or sensitive, and what adjustments might improve it.",
+  },
+  {
+    id: "bridge-theory-and-practice",
+    title: "Bridge theory and chemical engineering practice",
+    description:
+      "Connect equations and diagrams to practical decisions in reactors, separators, heat exchangers, and other process systems.",
+  },
+];
+
+const learningGoalsById: Record<string, LearningGoal> = Object.fromEntries(
+  learningGoals.map((goal) => [goal.id, goal]),
 );
-
-const lectureContentById: Record<string, LectureContent> = {
-  "final-project": {
-    duration: "12 min",
-    level: "Course Review",
-    sections: [
-      {
-        heading: "Frame the Process",
-        body: [
-          {
-            type: "paragraph",
-            text: "Start by identifying the process objective, the major disturbances, and the variables available for measurement and actuation. Good control work begins with a clean process description.",
-          },
-          {
-            type: "python",
-            caption: "A small Python sketch for organizing process variables",
-            code: `process_case = {
-    "controlled_variable": "reactor temperature",
-    "manipulated_variable": "coolant flow rate",
-    "measured_variable": "temperature transmitter",
-    "main_disturbance": "feed composition swing",
-}
-
-for label, value in process_case.items():
-    print(f"{label}: {value}")`,
-          },
-        ],
-      },
-      {
-        heading: "Connect Model and Controller",
-        body: [
-          {
-            type: "paragraph",
-            text: "Relate the process dynamics to controller choice and tuning strategy. The key engineering judgment is matching loop aggressiveness to the time scales and risks in the plant.",
-          },
-        ],
-      },
-      {
-        heading: "Evaluate Performance",
-        body: [
-          {
-            type: "paragraph",
-            text: "Review the closed-loop response in terms of stability, speed, offset, and robustness. For chemical engineers, the best solution is rarely the fastest one; it is the one that stays reliable under realistic operating conditions.",
-          },
-        ],
-      },
-    ],
-    summary: [
-      {
-        type: "paragraph",
-        text: "A useful control strategy begins with a clean process definition, including disturbances, measurements, and manipulated variables.",
-      },
-      {
-        type: "paragraph",
-        text: "For many practical loops, we connect dynamic behavior to a compact first-order-plus-dead-time view such as $G_p(s)=\\dfrac{K e^{-\\theta s}}{\\tau s + 1}$.",
-      },
-      {
-        type: "paragraph",
-        text: "Final judgment comes from balancing speed, robustness, and operability rather than optimizing only one metric.",
-      },
-    ],
-  },
-};
-
-const moduleContentById: Record<string, ModuleContent> = {
-  "intro-data": {
-    theory: [
-      {
-        type: "paragraph",
-        text: "Process Dynamics and Control starts with the idea that chemical processes evolve over time. Inventories, temperatures, concentrations, and pressures respond to inputs, disturbances, and initial conditions.",
-      },
-      {
-        type: "paragraph",
-        text: "A dynamic variable is often described through a state balance. In compact form we can write $\\dfrac{dx}{dt}=f(x,u,d)$ where $x$ is the process state, $u$ the manipulated input, and $d$ the disturbance.",
-      },
-      {
-        type: "paragraph",
-        text: "$$\\text{Accumulation} = \\text{In} - \\text{Out} + \\text{Generation} - \\text{Consumption}$$",
-      },
-      {
-        type: "python",
-        caption: "Toy state update for a stirred tank inventory",
-        code: `level = 1.2
-qin = 0.18
-qout = 0.15
-dt = 1.0
-
-for minute in range(5):
-    level += (qin - qout) * dt
-    print(f"minute={minute + 1}, level={level:.2f}")`,
-      },
-    ],
-    summary: [
-      {
-        type: "paragraph",
-        text: "Dynamic analysis explains how process variables move over time rather than only where they settle.",
-      },
-      {
-        type: "paragraph",
-        text: "State, input, and disturbance language gives students a foundation for later control reasoning.",
-      },
-      {
-        type: "paragraph",
-        text: "Mass and energy balances are the natural starting point for many process models.",
-      },
-    ],
-    questions: [
-      {
-        id: "intro-data-state-variable",
-        prompt: "Name one process state variable you would track in a mixing tank.",
-        placeholder: "For example: liquid level, concentration, or temperature.",
-        acceptedKeywords: ["level", "concentration", "temperature", "inventory"],
-        hint: "Think of a quantity that stores material or energy inside the vessel.",
-      },
-      {
-        id: "intro-data-disturbance",
-        prompt: "Describe one likely disturbance entering that same process.",
-        placeholder: "Write a short sentence about a feed or environmental disturbance.",
-        acceptedKeywords: ["feed", "inlet", "composition", "temperature", "disturbance", "flow"],
-        hint: "A disturbance is something entering from outside the controller's direct command, such as feed composition or inlet flow changes.",
-      },
-    ],
-  },
-  tables: {
-    theory: [
-      {
-        type: "paragraph",
-        text: "Many process units can be approximated as first-order systems over a useful operating region. This gives an intuitive bridge between physics and control design.",
-      },
-      {
-        type: "paragraph",
-        text: "The two most recognizable parameters are process gain $K$ and time constant $\\tau$. Together they explain how far and how fast the output responds.",
-      },
-      {
-        type: "paragraph",
-        text: "$$G_p(s)=\\frac{K}{\\tau s + 1}$$",
-      },
-      {
-        type: "python",
-        caption: "Generate a first-order step response sample",
-        code: `import math
-
-K = 2.0
-tau = 5.0
-
-for t in range(0, 21, 5):
-    y = K * (1 - math.exp(-t / tau))
-    print(f"t={t:>2} min -> y={y:.3f}")`,
-      },
-    ],
-    summary: [
-      {
-        type: "paragraph",
-        text: "First-order models are simple enough to reason with and rich enough to guide controller choices.",
-      },
-      {
-        type: "paragraph",
-        text: "Gain captures sensitivity and the time constant captures response speed.",
-      },
-      {
-        type: "paragraph",
-        text: "These models are often the first approximation before dead time and higher-order effects are added.",
-      },
-    ],
-    questions: [
-      {
-        id: "tables-gain-meaning",
-        prompt: "In your own words, what does process gain tell you?",
-        placeholder: "Describe how much the output changes for an input change.",
-        acceptedKeywords: ["change", "output", "input", "sensitivity", "response"],
-        hint: "Your answer should mention that gain links an input change to the size of the output response.",
-      },
-    ],
-  },
-  "query-basics": {
-    theory: [
-      {
-        type: "paragraph",
-        text: "Feedback control compares a measured process variable to a target and acts on the process to reduce the error.",
-      },
-      {
-        type: "paragraph",
-        text: "A standard loop uses the error $e(t)=r(t)-y(t)$ where $r(t)$ is the setpoint and $y(t)$ is the measured output.",
-      },
-      {
-        type: "paragraph",
-        text: "$$u(t)=K_c e(t)$$",
-      },
-    ],
-    summary: [
-      {
-        type: "paragraph",
-        text: "Feedback organizes measurement, decision, and action into one loop.",
-      },
-      {
-        type: "paragraph",
-        text: "Controlled, measured, and manipulated variables should always be named clearly.",
-      },
-      {
-        type: "paragraph",
-        text: "Error-based thinking prepares students for tuning and performance assessment.",
-      },
-    ],
-    questions: [
-      {
-        id: "query-basics-cv",
-        prompt: "Give one example of a controlled variable in a chemical process.",
-        placeholder: "For example: reactor temperature, distillation pressure, tank level...",
-        acceptedKeywords: ["temperature", "pressure", "level", "concentration", "ph"],
-        hint: "A controlled variable is the quantity you want to keep near target, such as level, pressure, or temperature.",
-      },
-      {
-        id: "query-basics-mv",
-        prompt: "Give one example of a manipulated variable that could influence it.",
-        placeholder: "For example: steam valve opening, reflux flow, coolant flow...",
-        acceptedKeywords: ["valve", "flow", "steam", "coolant", "reflux", "heat"],
-        hint: "A manipulated variable is something the controller can move directly, often a valve position, heat input, or flow rate.",
-      },
-    ],
-  },
-  "select-rows": {
-    theory: [
-      {
-        type: "paragraph",
-        text: "Controller tuning is the practical task of choosing parameters that deliver acceptable speed, stability, and robustness.",
-      },
-      {
-        type: "paragraph",
-        text: "Even when a formal rule is used, the engineer still judges the operating context, actuator limits, and disturbance environment.",
-      },
-      {
-        type: "paragraph",
-        text: "A common proportional-integral-derivative form is $$u(t)=K_c\\left(e(t)+\\frac{1}{\\tau_I}\\int e(t)dt + \\tau_D \\frac{de}{dt}\\right).$$",
-      },
-      {
-        type: "python",
-        caption: "A compact PID calculation loop",
-        code: `Kc = 2.5
-tau_i = 4.0
-tau_d = 0.5
-dt = 1.0
-integral = 0.0
-last_error = 0.0
-
-for error in [1.2, 0.8, 0.3, 0.1]:
-    integral += error * dt
-    derivative = (error - last_error) / dt
-    u = Kc * (error + integral / tau_i + tau_d * derivative)
-    print(f"error={error:.2f}, controller_output={u:.2f}")
-    last_error = error`,
-      },
-    ],
-    summary: [
-      {
-        type: "paragraph",
-        text: "Tuning is not only a formula exercise; it is an engineering tradeoff.",
-      },
-      {
-        type: "paragraph",
-        text: "Good tuning respects both the process dynamics and the operating risks.",
-      },
-      {
-        type: "paragraph",
-        text: "PID parameters should be interpreted in terms of what behavior they encourage.",
-      },
-    ],
-    questions: [
-      {
-        id: "select-rows-tuning-goal",
-        prompt: "What is one tuning tradeoff you would watch in a real plant?",
-        placeholder: "Example: overshoot versus settling time, or speed versus valve wear.",
-        acceptedKeywords: ["overshoot", "settling", "speed", "stability", "robust", "wear", "oscillation"],
-        hint: "Common tuning tradeoffs include speed versus stability, overshoot versus settling time, or aggressiveness versus robustness.",
-      },
-    ],
-  },
-  "combine-data": {
-    theory: [
-      {
-        type: "paragraph",
-        text: "Closed-loop performance is judged through metrics such as overshoot, settling time, oscillation, offset, and disturbance rejection.",
-      },
-      {
-        type: "paragraph",
-        text: "A loop may be fast but fragile, or robust but sluggish. Performance always has to be interpreted in context.",
-      },
-      {
-        type: "paragraph",
-        text: "For setpoint tracking we often discuss the transient response of $y(t)$ and whether it remains acceptable for plant operation and safety.",
-      },
-    ],
-    summary: [
-      {
-        type: "paragraph",
-        text: "Performance metrics translate raw responses into operational judgment.",
-      },
-      {
-        type: "paragraph",
-        text: "A useful controller is stable, understandable, and appropriate for the process objective.",
-      },
-      {
-        type: "paragraph",
-        text: "Engineers should evaluate both setpoint tracking and disturbance rejection.",
-      },
-    ],
-    questions: [
-      {
-        id: "combine-data-metric",
-        prompt: "Which performance metric would matter most for a safety-critical loop, and why?",
-        placeholder: "Write a short reflection in one or two sentences.",
-        acceptedKeywords: ["stability", "overshoot", "robust", "robustness", "oscillation", "safety"],
-        hint: "For safety-critical loops, think about metrics that prevent dangerous excursions, such as stability, overshoot, or robustness.",
-      },
-    ],
-  },
-  "final-project": {
-    theory: [
-      {
-        type: "paragraph",
-        text: "This final placeholder topic combines process modeling, feedback logic, and performance evaluation into one compact review.",
-      },
-      {
-        type: "paragraph",
-        text: "Students should be able to interpret a model, reason about a loop structure, and defend a practical control decision.",
-      },
-      {
-        type: "paragraph",
-        text: "$$\\text{Good control} = \\text{model insight} + \\text{loop reasoning} + \\text{operational judgment}$$",
-      },
-    ],
-    summary: [
-      {
-        type: "paragraph",
-        text: "The final review pulls together the main language of Process Dynamics and Control.",
-      },
-      {
-        type: "paragraph",
-        text: "Students should be able to move from process description to controller reasoning with confidence.",
-      },
-      {
-        type: "paragraph",
-        text: "The most important habit is not memorization but disciplined interpretation of process behavior.",
-      },
-    ],
-    questions: [
-      {
-        id: "final-project-loop-choice",
-        prompt: "Describe one control loop from a chemical plant and justify why it should be feedback-controlled.",
-        placeholder: "Name the loop, the controlled variable, and your reasoning.",
-        acceptedKeywords: ["loop", "temperature", "pressure", "level", "feedback", "disturbance", "controller"],
-        hint: "Name a real loop, identify the controlled variable, and mention how feedback helps reject disturbances or hold a target.",
-      },
-    ],
-  },
-};
-
-export const validQuestionIds = new Set(
-  Object.values(moduleContentById)
-    .flatMap((moduleContent) => moduleContent.questions ?? [])
-    .map((question) => question.id),
-);
-
-export function isQuestionAnswerCorrect(question: ModuleQuestion, answer: string) {
-  const normalizedAnswer = answer.toLowerCase();
-  return question.acceptedKeywords.some((keyword) => normalizedAnswer.includes(keyword.toLowerCase()));
-}
-
-export function getLectureContent(moduleId: string) {
-  return lectureContentById[moduleId];
-}
 
 export function getModuleContent(moduleId: string) {
-  return moduleContentById[moduleId];
+  return getRegisteredModuleContent(moduleId);
+}
+
+export function getLearningGoalsForModule(moduleId: string) {
+  const module = modules[moduleId];
+  if (!module) {
+    return [];
+  }
+
+  return module.learningGoalIds
+    .map((goalId) => learningGoalsById[goalId])
+    .filter((goal): goal is LearningGoal => Boolean(goal));
 }
 
 export function getPrerequisites(moduleId: string, visited = new Set<string>()) {
