@@ -37,6 +37,15 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install TikZ and SVG conversion tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            texlive-latex-base \
+            texlive-latex-extra \
+            texlive-pictures \
+            poppler-utils
+
       - name: Install graph dependencies
         run: pip install -r dev/requirements-graphs.txt
 

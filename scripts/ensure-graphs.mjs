@@ -1,26 +1,36 @@
 import { access } from "node:fs/promises";
 import { spawn } from "node:child_process";
 
-const graphDefinitions = [
+const assetDefinitions = [
   {
+    kind: "python-graph",
     name: "Module 2 Example 2.1 concentration plot",
     output: "public/generated/modules/02/example_2_1.svg",
     script: "dev/scripts/modules/02/example_2_1.py",
   },
   {
+    kind: "python-graph",
     name: "Module 2 Example 2.2 comparison plot",
     output: "public/generated/modules/02/example_2_2.svg",
     script: "dev/scripts/modules/02/example_2_2.py",
   },
   {
+    kind: "python-graph",
     name: "Module 2 linearization comparison plot",
     output: "public/generated/modules/02/example_2_3.svg",
     script: "dev/scripts/modules/02/example_2_3.py",
   },
   {
+    kind: "python-graph",
     name: "Module 2 Example 2.6 non-isothermal CSTR plot",
     output: "public/generated/modules/02/example_2_6.svg",
     script: "dev/scripts/modules/02/example_2_6.py",
+  },
+  {
+    kind: "tikz-diagram",
+    name: "Module 4 Example 4.4 feedback block diagram",
+    output: "public/generated/modules/04/example_4_4_feedback_block_diagram.svg",
+    script: "dev/scripts/modules/04/example_4_4_feedback_block_diagram.mjs",
   },
 ];
 
@@ -67,35 +77,73 @@ async function validatePythonEnvironment() {
   }
 }
 
+async function validateTikzEnvironment() {
+  const dependencyCheckScript = [
+    "-lc",
+    [
+      "latex='';",
+      "for cmd in pdflatex lualatex xelatex; do",
+      "  if command -v \"$cmd\" >/dev/null 2>&1; then latex=\"$cmd\"; break; fi",
+      "done;",
+      "converter='';",
+      "for cmd in pdftocairo pdf2svg dvisvgm; do",
+      "  if command -v \"$cmd\" >/dev/null 2>&1; then converter=\"$cmd\"; break; fi",
+      "done;",
+      "[ -n \"$latex\" ] && [ -n \"$converter\" ];",
+    ].join(" "),
+  ];
+
+  try {
+    await runProcess("bash", dependencyCheckScript);
+  } catch {
+    throw new Error(
+      "TikZ diagram dependencies are missing. Install a LaTeX engine (pdflatex, lualatex, or xelatex) and a PDF-to-SVG converter (pdftocairo, pdf2svg, or dvisvgm) and retry.",
+    );
+  }
+}
+
 async function main() {
   const forceRebuild = process.argv.includes("--force");
-  const missingGraphs = [];
+  const missingAssets = [];
 
-  for (const graph of graphDefinitions) {
-    const fileExists = await exists(graph.output);
+  for (const asset of assetDefinitions) {
+    const fileExists = await exists(asset.output);
     if (forceRebuild || !fileExists) {
-      missingGraphs.push(graph);
+      missingAssets.push(asset);
     }
   }
 
-  if (missingGraphs.length === 0) {
-    console.log("All required graphs already exist.");
+  if (missingAssets.length === 0) {
+    console.log("All required generated assets already exist.");
     return;
   }
 
-  await validatePythonEnvironment();
+  const requiresPython = missingAssets.some((asset) => asset.kind === "python-graph");
+  const requiresTikz = missingAssets.some((asset) => asset.kind === "tikz-diagram");
+
+  if (requiresPython) {
+    await validatePythonEnvironment();
+  }
+
+  if (requiresTikz) {
+    await validateTikzEnvironment();
+  }
 
   console.log(
     forceRebuild
-      ? `Rebuilding ${missingGraphs.length} graph(s)...`
-      : `Generating ${missingGraphs.length} missing graph(s)...`,
+      ? `Rebuilding ${missingAssets.length} generated asset(s)...`
+      : `Generating ${missingAssets.length} missing generated asset(s)...`,
   );
-  for (const graph of missingGraphs) {
-    console.log(`• ${graph.name}`);
-    await runProcess("python3", [graph.script, "--output", graph.output, "--no-show"]);
+  for (const asset of missingAssets) {
+    console.log(`• ${asset.name}`);
+    if (asset.kind === "python-graph") {
+      await runProcess("python3", [asset.script, "--output", asset.output, "--no-show"]);
+      continue;
+    }
+    await runProcess("node", [asset.script, "--output", asset.output]);
   }
 
-  console.log(forceRebuild ? "Graph rebuild complete." : "Graph generation complete.");
+  console.log(forceRebuild ? "Generated asset rebuild complete." : "Generated asset creation complete.");
 }
 
 main().catch((error) => {

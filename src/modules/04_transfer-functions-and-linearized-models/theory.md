@@ -295,6 +295,22 @@ Transfer functions fit this signal-flow view perfectly. Each block represents
 an input-output relation, and complicated loops can be analyzed by combining the
 blocks systematically.
 
+> # Example 4.4: A Simple Feedback Block Diagram
+>
+> The transfer function picture becomes even clearer when it is drawn as a block
+> diagram. The figure below shows a simple closed-loop system with a summing
+> junction, a process block $G(s)=\frac{1}{s+1}$, an output $y$, and a unity
+> feedback path.
+>
+> ![Example 4.4 feedback block diagram](/generated/modules/04/example_4_4_feedback_block_diagram.svg "Figure 4.1: Simple closed-loop block diagram with process transfer function 1/(s+1) and unity feedback | width=52%")
+>
+> This diagram is useful because it separates the roles of the signals and the
+> dynamics. The input $u$ enters the summing junction, the process block maps
+> the resulting signal to the output $y$, and the feedback line returns the
+> measured output to the summing point. In later feedback analysis, this same
+> visual language helps us derive closed-loop transfer functions and reason about
+> disturbance rejection and stability.
+
 ## Why Nonlinear Models Must Often Be Linearized
 
 Many real processes are nonlinear. Reaction rates depend exponentially on
