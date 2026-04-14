@@ -6,6 +6,18 @@ const PythonCodeBlock = lazy(() =>
   import("./PythonCodeBlock").then((module) => ({ default: module.PythonCodeBlock })),
 );
 
+function resolveContentAssetUrl(src: string) {
+  if (!src.startsWith("/")) {
+    return src;
+  }
+
+  const baseUrl = import.meta.env.BASE_URL.endsWith("/")
+    ? import.meta.env.BASE_URL
+    : `${import.meta.env.BASE_URL}/`;
+
+  return `${baseUrl}${src.replace(/^\/+/, "")}`;
+}
+
 export function RichContent({ blocks }: { blocks: ContentBlock[] }) {
   return (
     <>
@@ -26,7 +38,12 @@ export function RichContent({ blocks }: { blocks: ContentBlock[] }) {
               className="content-image-shell"
               style={block.width ? { maxWidth: block.width, marginInline: "auto" } : undefined}
             >
-              <img className="content-image" src={block.src} alt={block.alt} loading="lazy" />
+              <img
+                className="content-image"
+                src={resolveContentAssetUrl(block.src)}
+                alt={block.alt}
+                loading="lazy"
+              />
               {block.caption && <figcaption className="content-image-caption">{block.caption}</figcaption>}
             </figure>
           );
