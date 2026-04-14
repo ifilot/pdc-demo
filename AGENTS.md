@@ -199,6 +199,222 @@ When adding a new module folder:
   - `summary.md`
   - `checkpoint.ts`
 
+## Example Authoring Rules
+
+Worked examples are part of the teaching voice of the module and should be visually distinct from the surrounding explanatory text.
+
+Codex should format numbered examples in module Markdown as blockquote-style callouts using the `>` prefix on every line of the example.
+
+Preferred pattern:
+
+```md
+> # Example 2.1: A Stirred-Tank Mixer
+>
+> Introductory explanation of the example.
+>
+> $$\tau = \frac{V}{F}$$
+>
+> Additional interpretation.
+>
+> ![Example 2.1 concentration response](/generated/modules/02/example_2_1.png "Figure 2.1: ... | width=60%")
+```
+
+Codex should:
+
+- keep the example heading inside the callout block
+- keep all example prose, equations, bullet lists, and figures inside the same callout block
+- leave a blank line between one example callout and the next so they render as separate boxes
+- preserve the numbered sequence of examples within the module
+- keep the surrounding theory text outside the example callout unless it is truly part of the worked example
+
+### Example Visual Style
+
+The site renders example callouts with:
+
+- a distinct background
+- left-side indentation
+- a vertical accent line
+- slightly smaller typography than the main body text
+
+Codex should treat this as the standard presentation for worked examples and should not invent alternative example containers unless a new style is explicitly requested.
+
+### Example Content Style
+
+Worked examples should read like guided engineering reasoning, not like disconnected calculations.
+
+Codex should:
+
+- begin with a short statement of the physical situation or modelling goal
+- present equations in a logical sequence
+- explain what the reader should notice physically, not only mathematically
+- place parameter values in the example text when they are part of the setup
+- keep figure references and interpretation inside the example when the figure belongs to that example
+
+If an example includes a graph, keep the graph filename aligned with the example number whenever possible.
+
+## Code Listing Rules
+
+Short code listings are allowed inside theory modules when they clearly support the teaching point and remain concise.
+
+Codex should embed code listings in Markdown fenced code blocks and use the caption slot after the language tag to provide a numbered listing title.
+
+Preferred pattern:
+
+```md
+```python | Listing 2.1: Solving a first-order model with solve_ivp
+from scipy.integrate import solve_ivp
+```
+```
+
+Codex should:
+
+- number listings in the order they appear within the module
+- use captions of the form `Listing <chapter>.<number>: ...`
+- keep listing titles descriptive but short
+- keep listings compact and readable rather than production-heavy
+- include only the code needed for the instructional point
+- prefer `python` for executable computational examples unless another language is explicitly needed
+
+### Listing Style
+
+Listings should support the surrounding explanation, not replace it.
+
+Codex should:
+
+- introduce the listing in prose before it appears
+- explain briefly what the listing demonstrates
+- keep important interpretation in the surrounding text rather than in large code comments
+- avoid oversized scripts or notebook-style dumps in module Markdown
+
+If a listing is closely tied to a worked example, keep it inside the example callout so it inherits the same visual grouping.
+
+## Graph Authoring Rules
+
+Instructional graphs are part of the authored teaching material and should be built in a consistent, reproducible way.
+
+### Graph Source of Truth
+
+Codex should generate instructional graphs from code, not draw them manually.
+
+Use a dedicated Python script with `matplotlib` for each graph.
+
+Store graph-generation scripts under:
+
+```text
+dev/scripts/modules/<module-number>/
+```
+
+Store generated graph assets under:
+
+```text
+public/generated/modules/<module-number>/
+```
+
+### Graph Naming
+
+When a graph belongs to a numbered example, use the example number as the canonical filename.
+
+Preferred pattern:
+
+- script: `example_<chapter>_<number>.py`
+- output: `example_<chapter>_<number>.png`
+
+Examples:
+
+- `example_2_1.py`
+- `example_2_1.png`
+- `example_2_2.py`
+- `example_2_2.png`
+
+Do not add extra suffixes such as `_comparison`, `_final`, or `_v2` unless there is a real need for multiple distinct figures tied to the same example.
+
+If multiple graphs are genuinely needed for the same example, add one short descriptive suffix consistently to both files, for example:
+
+- `example_2_4_temperature.py`
+- `example_2_4_temperature.png`
+
+### Graph Content and Style
+
+Each graph should support a specific teaching point in the surrounding text.
+
+Codex should:
+
+- keep graph styling simple, technical, and publication-like
+- keep visual style broadly consistent within a module
+- use similar figure sizes, line widths, font sizes, grid styling, and annotation style across related figures
+- use legends, labels, and annotations only when they improve instructional clarity
+- avoid overcrowding a single figure with too many ideas
+
+The script should include a short docstring that states:
+
+- what the graph shows
+- which model is being plotted
+- what disturbance or scenario is being simulated
+
+Use parameter values from the module text whenever they are explicitly given.
+
+If a parameter value is illustrative rather than taken directly from the text, state that clearly in the script and, when helpful for the reader, also state it in the module prose.
+
+### Graph Integration in Module Text
+
+Reference graphs from module Markdown using standard Markdown image syntax.
+
+Use generated asset paths of the form:
+
+```md
+![Alt text](/generated/modules/02/example_2_2.png "Figure 2.2: ...")
+```
+
+If a narrower figure is needed, use the supported width metadata in the title string:
+
+```md
+![Alt text](/generated/modules/02/example_2_2.png "Figure 2.2: ... | width=68%")
+```
+
+Codex should:
+
+- place the figure close to the paragraph where it is first discussed
+- introduce the figure in prose before the image appears
+- use alt text that describes the figure content, not the filename
+- give the figure a clear caption in the Markdown title string
+- explain in the prose what the reader should notice in the graph
+
+### Graph Build Workflow
+
+Every required graph should be registered in:
+
+```text
+scripts/ensure-graphs.mjs
+```
+
+When adding or changing a graph, Codex should:
+
+1. add or update the Python script
+2. generate or regenerate the PNG
+3. update the Markdown reference if needed
+4. update `scripts/ensure-graphs.mjs`
+5. run `npm run build`
+
+### Graph Maintenance
+
+Codex should keep graph scripts readable and easy to adjust.
+
+Prefer explicit constants near the top of the script for:
+
+- physical parameters
+- time ranges
+- disturbance magnitudes
+- plotting settings
+
+Preserve stable filenames when the conceptual role of the graph has not changed.
+
+If a graph file is renamed, update all connected references, including:
+
+- the Python script filename
+- the generated PNG filename
+- `scripts/ensure-graphs.mjs`
+- the Markdown image reference
+
 ## What Codex Should Avoid
 
 - Do not reintroduce a lecture/module split.

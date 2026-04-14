@@ -17,6 +17,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 
+from plot_style import apply_course_plot_style
+
 
 # Data from Appendix C.2
 F = 1.0  # m^3/min
@@ -190,6 +192,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    apply_course_plot_style()
     time, ca, temperature, _ = simulate()
     figure = make_figure(time, ca, temperature)
 

@@ -19,6 +19,39 @@ export function RichContent({ blocks }: { blocks: ContentBlock[] }) {
           return <HeadingTag key={index}>{block.text}</HeadingTag>;
         }
 
+        if (block.type === "image") {
+          return (
+            <figure
+              key={index}
+              className="content-image-shell"
+              style={block.width ? { maxWidth: block.width, marginInline: "auto" } : undefined}
+            >
+              <img className="content-image" src={block.src} alt={block.alt} loading="lazy" />
+              {block.caption && <figcaption className="content-image-caption">{block.caption}</figcaption>}
+            </figure>
+          );
+        }
+
+        if (block.type === "callout") {
+          return (
+            <blockquote key={index} className="content-callout">
+              <RichContent blocks={block.blocks} />
+            </blockquote>
+          );
+        }
+
+        if (block.type === "list") {
+          return (
+            <ul key={index} className="content-list">
+              {block.items.map((item, itemIndex) => (
+                <li key={itemIndex}>
+                  <MathParagraph text={item} />
+                </li>
+              ))}
+            </ul>
+          );
+        }
+
         return (
           <Suspense
             key={index}

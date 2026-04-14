@@ -21,6 +21,35 @@ import reviewSummary from "../modules/07_control-strategy-review/summary.md?raw"
 import reviewCheckpoint from "../modules/07_control-strategy-review/checkpoint";
 import type { ContentBlock, ModuleCheckpoint, ModuleContent, ModuleQuestion } from "../types/moduleContent";
 
+function parseImageMetadata(rawTitle?: string) {
+  if (!rawTitle) {
+    return {};
+  }
+
+  const parts = rawTitle
+    .split("|")
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  let caption = "";
+  let width: string | undefined;
+
+  for (const part of parts) {
+    const widthMatch = part.match(/^width\s*=\s*(\d+(?:\.\d+)?(?:px|%|rem|em|vw)?)$/i);
+    if (widthMatch) {
+      width = widthMatch[1];
+      continue;
+    }
+
+    caption = caption ? `${caption} | ${part}` : part;
+  }
+
+  return {
+    caption: caption || undefined,
+    width,
+  };
+}
+
 function parseMarkdownContent(markdown: string): ContentBlock[] {
   const normalized = markdown.replace(/\r\n/g, "\n").trim();
   if (!normalized) {
@@ -30,10 +59,12 @@ function parseMarkdownContent(markdown: string): ContentBlock[] {
   const blocks: ContentBlock[] = [];
   const lines = normalized.split("\n");
   const paragraphLines: string[] = [];
+  const listItems: string[] = [];
   let inCodeBlock = false;
   let codeLanguage = "";
   let codeCaption = "";
   let codeLines: string[] = [];
+  let quoteLines: string[] = [];
 
   function flushParagraph() {
     if (paragraphLines.length === 0) {
@@ -45,6 +76,18 @@ function parseMarkdownContent(markdown: string): ContentBlock[] {
       blocks.push({ type: "paragraph", text });
     }
     paragraphLines.length = 0;
+  }
+
+  function flushList() {
+    if (listItems.length === 0) {
+      return;
+    }
+
+    blocks.push({
+      type: "list",
+      items: [...listItems],
+    });
+    listItems.length = 0;
   }
 
   function flushCodeBlock() {
@@ -66,7 +109,26 @@ function parseMarkdownContent(markdown: string): ContentBlock[] {
     codeCaption = "";
   }
 
-  for (const line of lines) {
+  function flushQuoteBlock() {
+    if (quoteLines.length === 0) {
+      return;
+    }
+
+    const quoteContent = quoteLines.join("\n").trim();
+    quoteLines = [];
+
+    if (!quoteContent) {
+      return;
+    }
+
+    blocks.push({
+      type: "callout",
+      blocks: parseMarkdownContent(quoteContent),
+    });
+  }
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index];
     const fenceMatch = line.match(/^```([a-zA-Z0-9_-]+)?(?:\s+\|\s*(.+))?$/);
 
     if (fenceMatch) {
@@ -88,14 +150,40 @@ function parseMarkdownContent(markdown: string): ContentBlock[] {
     }
 
     const trimmed = line.trim();
+
+    const quoteMatch = line.match(/^\s*>\s?(.*)$/);
+    if (quoteMatch) {
+      flushParagraph();
+      flushList();
+      quoteLines.push(quoteMatch[1]);
+      continue;
+    }
+
+    if (quoteLines.length > 0 && !trimmed) {
+      const nextLine = lines[index + 1];
+      const nextIsQuote = typeof nextLine === "string" && /^\s*>\s?/.test(nextLine);
+
+      if (nextIsQuote) {
+        flushQuoteBlock();
+        continue;
+      }
+
+      quoteLines.push("");
+      continue;
+    }
+
+    flushQuoteBlock();
+
     if (!trimmed) {
       flushParagraph();
+      flushList();
       continue;
     }
 
     const headingMatch = trimmed.match(/^(#{1,6})\s+(.+)$/);
     if (headingMatch) {
       flushParagraph();
+      flushList();
       blocks.push({
         type: "heading",
         level: headingMatch[1].length as 1 | 2 | 3 | 4 | 5 | 6,
@@ -104,12 +192,38 @@ function parseMarkdownContent(markdown: string): ContentBlock[] {
       continue;
     }
 
+    const imageMatch = trimmed.match(/^!\[([^\]]*)\]\((\S+)(?:\s+"([^"]+)")?\)$/);
+    if (imageMatch) {
+      flushParagraph();
+      flushList();
+      const { caption, width } = parseImageMetadata(imageMatch[3]?.trim());
+      blocks.push({
+        type: "image",
+        alt: imageMatch[1].trim(),
+        src: imageMatch[2].trim(),
+        caption,
+        width,
+      });
+      continue;
+    }
+
+    const listMatch = trimmed.match(/^-\s+(.+)$/);
+    if (listMatch) {
+      flushParagraph();
+      listItems.push(listMatch[1].trim());
+      continue;
+    }
+
+    flushList();
+
     paragraphLines.push(trimmed);
   }
 
   if (inCodeBlock) {
     flushCodeBlock();
   } else {
+    flushQuoteBlock();
+    flushList();
     flushParagraph();
   }
 

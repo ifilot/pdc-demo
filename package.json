@@ -6,7 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate:graphs": "node scripts/ensure-graphs.mjs",
+    "rebuild:graphs": "node scripts/ensure-graphs.mjs --force",
+    "predev": "npm run generate:graphs",
+    "prebuild": "npm run generate:graphs"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^7.2.0",
