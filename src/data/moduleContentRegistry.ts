@@ -4,21 +4,12 @@ import introCheckpoint from "../modules/01_introduction-to-process-control/check
 import modelingTheory from "../modules/02_mathematical-modelling-principles/theory.md?raw";
 import modelingSummary from "../modules/02_mathematical-modelling-principles/summary.md?raw";
 import modelingCheckpoint from "../modules/02_mathematical-modelling-principles/checkpoint";
-import tablesTheory from "../modules/03_first-order-process-models/theory.md?raw";
-import tablesSummary from "../modules/03_first-order-process-models/summary.md?raw";
-import tablesCheckpoint from "../modules/03_first-order-process-models/checkpoint";
-import feedbackTheory from "../modules/04_feedback-control-concepts/theory.md?raw";
-import feedbackSummary from "../modules/04_feedback-control-concepts/summary.md?raw";
-import feedbackCheckpoint from "../modules/04_feedback-control-concepts/checkpoint";
-import tuningTheory from "../modules/05_controller-tuning/theory.md?raw";
-import tuningSummary from "../modules/05_controller-tuning/summary.md?raw";
-import tuningCheckpoint from "../modules/05_controller-tuning/checkpoint";
-import performanceTheory from "../modules/06_closed-loop-performance/theory.md?raw";
-import performanceSummary from "../modules/06_closed-loop-performance/summary.md?raw";
-import performanceCheckpoint from "../modules/06_closed-loop-performance/checkpoint";
-import reviewTheory from "../modules/07_control-strategy-review/theory.md?raw";
-import reviewSummary from "../modules/07_control-strategy-review/summary.md?raw";
-import reviewCheckpoint from "../modules/07_control-strategy-review/checkpoint";
+import laplaceTheory from "../modules/03_laplace-transforms/theory.md?raw";
+import laplaceSummary from "../modules/03_laplace-transforms/summary.md?raw";
+import laplaceCheckpoint from "../modules/03_laplace-transforms/checkpoint";
+import transferTheory from "../modules/04_transfer-functions-and-linearized-models/theory.md?raw";
+import transferSummary from "../modules/04_transfer-functions-and-linearized-models/summary.md?raw";
+import transferCheckpoint from "../modules/04_transfer-functions-and-linearized-models/checkpoint";
 import type { ContentBlock, ModuleCheckpoint, ModuleContent, ModuleQuestion } from "../types/moduleContent";
 
 function parseImageMetadata(rawTitle?: string) {
@@ -27,6 +18,35 @@ function parseImageMetadata(rawTitle?: string) {
   }
 
   const parts = rawTitle
+    .split("|")
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  let caption = "";
+  let width: string | undefined;
+
+  for (const part of parts) {
+    const widthMatch = part.match(/^width\s*=\s*(\d+(?:\.\d+)?(?:px|%|rem|em|vw)?)$/i);
+    if (widthMatch) {
+      width = widthMatch[1];
+      continue;
+    }
+
+    caption = caption ? `${caption} | ${part}` : part;
+  }
+
+  return {
+    caption: caption || undefined,
+    width,
+  };
+}
+
+function parseTableMetadata(rawText?: string) {
+  if (!rawText) {
+    return {};
+  }
+
+  const parts = rawText
     .split("|")
     .map((part) => part.trim())
     .filter(Boolean);
@@ -127,6 +147,36 @@ function parseMarkdownContent(markdown: string): ContentBlock[] {
     });
   }
 
+  function isTableLine(value: string) {
+    return /^\|.+\|$/.test(value.trim());
+  }
+
+  function isTableSeparator(value: string) {
+    return /^\|(?:\s*:?-{3,}:?\s*\|)+$/.test(value.trim());
+  }
+
+  function parseTableCells(value: string) {
+    return value
+      .trim()
+      .slice(1, -1)
+      .split("|")
+      .map((cell) => cell.trim());
+  }
+
+  function consumeTrailingTableMetadata() {
+    if (paragraphLines.length !== 1) {
+      return {};
+    }
+
+    const candidate = paragraphLines[0].trim();
+    if (!/^Table\b/i.test(candidate)) {
+      return {};
+    }
+
+    paragraphLines.length = 0;
+    return parseTableMetadata(candidate);
+  }
+
   for (let index = 0; index < lines.length; index += 1) {
     const line = lines[index];
     const fenceMatch = line.match(/^```([a-zA-Z0-9_-]+)?(?:\s+\|\s*(.+))?$/);
@@ -177,6 +227,36 @@ function parseMarkdownContent(markdown: string): ContentBlock[] {
     if (!trimmed) {
       flushParagraph();
       flushList();
+      continue;
+    }
+
+    const nextLine = lines[index + 1]?.trim();
+    if (isTableLine(trimmed) && nextLine && isTableSeparator(nextLine)) {
+      const tableMetadata = consumeTrailingTableMetadata();
+      flushParagraph();
+      flushList();
+
+      const headers = parseTableCells(trimmed);
+      const rows: string[][] = [];
+      index += 2;
+
+      while (index < lines.length) {
+        const rowLine = lines[index].trim();
+        if (!isTableLine(rowLine)) {
+          index -= 1;
+          break;
+        }
+        rows.push(parseTableCells(rowLine));
+        index += 1;
+      }
+
+      blocks.push({
+        type: "table",
+        headers,
+        rows,
+        caption: tableMetadata.caption,
+        width: tableMetadata.width,
+      });
       continue;
     }
 
@@ -249,11 +329,8 @@ const moduleContentById: Record<string, ModuleContent> = {
     modelingSummary,
     modelingCheckpoint,
   ),
-  tables: createModuleContent(tablesTheory, tablesSummary, tablesCheckpoint),
-  "query-basics": createModuleContent(feedbackTheory, feedbackSummary, feedbackCheckpoint),
-  "select-rows": createModuleContent(tuningTheory, tuningSummary, tuningCheckpoint),
-  "combine-data": createModuleContent(performanceTheory, performanceSummary, performanceCheckpoint),
-  "final-project": createModuleContent(reviewTheory, reviewSummary, reviewCheckpoint),
+  "laplace-transforms": createModuleContent(laplaceTheory, laplaceSummary, laplaceCheckpoint),
+  "transfer-functions": createModuleContent(transferTheory, transferSummary, transferCheckpoint),
 };
 
 export const validQuestionIds = new Set(

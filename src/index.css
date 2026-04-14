@@ -981,8 +981,50 @@ h2 {
 }
 
 .content-callout .content-image-shell,
-.content-callout .code-block-shell {
+.content-callout .code-block-shell,
+.content-callout .content-table-shell {
   margin-bottom: 14px;
+}
+
+.content-table-shell {
+  margin: 0 0 18px;
+  overflow-x: auto;
+  border: 1px solid rgba(42, 68, 53, 0.08);
+  border-radius: 18px;
+  background: #f7faf8;
+}
+
+.content-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 520px;
+}
+
+.content-table th,
+.content-table td {
+  padding: 12px 14px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid rgba(42, 68, 53, 0.08);
+}
+
+.content-table th {
+  background: rgba(232, 240, 234, 0.9);
+  color: #244735;
+  font-weight: 700;
+}
+
+.content-table td {
+  color: var(--text-soft);
+}
+
+.content-table tr:last-child td {
+  border-bottom: none;
+}
+
+.content-table th p,
+.content-table td p {
+  margin: 0;
 }
 
 .code-block-shell {

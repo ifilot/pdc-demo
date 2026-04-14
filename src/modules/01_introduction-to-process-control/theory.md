@@ -2,17 +2,41 @@
 
 ## Overview
 
-Process control begins with a simple but important observation: chemical processes are dynamic. In a real plant, flows do not remain perfectly steady, temperatures drift, pressures rise and fall, and compositions change as operating conditions change. Even when a process is designed for a nominal steady state, it is continuously influenced by disturbances, equipment limitations, upstream variation, and production targets. Because of this, good plant operation requires more than process design alone. It also requires a way to maintain important variables near desired values while conditions change over time.
+Process control begins with a simple but important observation: chemical
+processes are dynamic. In a real plant, flows do not remain perfectly steady,
+temperatures drift, pressures rise and fall, and compositions change as
+operating conditions change. Even when a process is designed for a nominal
+steady state, it is continuously influenced by disturbances, equipment
+limitations, upstream variation, and production targets. Because of this, good
+plant operation requires more than process design alone. It also requires a way
+to maintain important variables near desired values while conditions change over
+time.
 
-This is the central purpose of process control. In practical terms, process control is the engineering activity of maintaining desired conditions in a physical system by adjusting selected variables in that system. The subject is widely used across engineering, but it has special significance in chemical engineering because chemical plants involve interacting flows, heat transfer, mass transfer, reaction, and separation, all of which are strongly affected by changing operating conditions.
+This is the central purpose of process control. In practical terms, process
+control is the engineering activity of maintaining desired conditions in a
+physical system by adjusting selected variables in that system. The subject is
+widely used across engineering, but it has special significance in chemical
+engineering because chemical plants involve interacting flows, heat transfer,
+mass transfer, reaction, and separation, all of which are strongly affected by
+changing operating conditions.
 
-A strong foundation in process control starts with practical questions: What does a control system do? Why is control necessary? Why is control possible? Where is control implemented? What do control engineers actually engineer? These questions connect the theory of feedback to the physical realities of plant operation.
+A strong foundation in process control starts with practical questions: What
+does a control system do? Why is control necessary? Why is control possible?
+Where is control implemented? What do control engineers actually engineer? These
+questions connect the theory of feedback to the physical realities of plant
+operation.
 
 ## What a Control System Does
 
-A control system acts to keep a process near a desired condition. That desired condition may be a target temperature, a reactor pressure, a tank level, a product composition, or any other variable that matters to safe and effective operation. A control system does not eliminate dynamics. Instead, it manages them. It observes what is happening, compares actual behavior to desired behavior, and acts on the process to reduce the difference.
+A control system acts to keep a process near a desired condition. That desired
+condition may be a target temperature, a reactor pressure, a tank level, a
+product composition, or any other variable that matters to safe and effective
+operation. A control system does not eliminate dynamics. Instead, it manages
+them. It observes what is happening, compares actual behavior to desired
+behavior, and acts on the process to reduce the difference.
 
-A helpful way to understand this is through familiar examples like steering a car or controlling room temperature. In each case, there is:
+A helpful way to understand this is through familiar examples like steering a
+car or controlling room temperature. In each case, there is:
 
 - a desired value or set point
 - a measured value
@@ -20,66 +44,149 @@ A helpful way to understand this is through familiar examples like steering a ca
 - a control calculation or decision
 - a final action applied to the process
 
-In a plant, these elements appear in engineering form. The variable we want to keep near target is the controlled variable. The quantity we can directly adjust is the manipulated variable. A sensor provides information about the current state of the process. A controller uses that information to decide on an action. A final control element, such as a valve, damper, pump command, or heater input, applies the action to the process.
+In a plant, these elements appear in engineering form. The variable we want to
+keep near target is the controlled variable. The quantity we can directly adjust
+is the manipulated variable. A sensor provides information about the current
+state of the process. A controller uses that information to decide on an action.
+A final control element, such as a valve, damper, pump command, or heater input,
+applies the action to the process.
 
-This structure is the basis of feedback control. Feedback means that information about the output of the system is used to influence the input to that same system. The result is a loop: the process produces an output, the output is measured, the measurement is compared against the target, and the controller acts to bring the process back toward the desired condition. This is why feedback is so powerful. It allows the process to correct itself in response to disturbances without requiring exact prediction of every change in advance.
+This structure is the basis of feedback control. Feedback means that information
+about the output of the system is used to influence the input to that same
+system. The result is a loop: the process produces an output, the output is
+measured, the measurement is compared against the target, and the controller
+acts to bring the process back toward the desired condition. This is why
+feedback is so powerful. It allows the process to correct itself in response to
+disturbances without requiring exact prediction of every change in advance.
 
 ## Why Process Control Is Necessary
 
-The first major reason for process control is disturbance rejection. Plants are constantly affected by disturbances that move them away from desired operation. Feed flow may change. Feed composition may vary. Utilities may fluctuate. Heat-transfer conditions may shift. Ambient conditions may change. If no corrective action is taken, these disturbances will drive key variables away from acceptable values.
+The first major reason for process control is disturbance rejection. Plants are
+constantly affected by disturbances that move them away from desired operation.
+Feed flow may change. Feed composition may vary. Utilities may fluctuate.
+Heat-transfer conditions may shift. Ambient conditions may change. If no
+corrective action is taken, these disturbances will drive key variables away
+from acceptable values.
 
-The second major reason for process control is that desired operating conditions themselves may change. Production rates can be increased or decreased. Product specifications can be tightened. A process may be asked to run at a new throughput or a new temperature target. Control is therefore not only about resisting unwanted change. It is also about enabling intentional change in a disciplined and reliable way.
+The second major reason for process control is that desired operating conditions
+themselves may change. Production rates can be increased or decreased. Product
+specifications can be tightened. A process may be asked to run at a new
+throughput or a new temperature target. Control is therefore not only about
+resisting unwanted change. It is also about enabling intentional change in a
+disciplined and reliable way.
 
-Processes are not self-correcting in the way we often wish they were. A stirred and heated tank, for example, will not automatically return to the right temperature if the inlet conditions change. A distillation column will not automatically hold product quality when feed composition shifts. In each case, the process needs measured information and deliberate corrective action.
+Processes are not self-correcting in the way we often wish they were. A stirred
+and heated tank, for example, will not automatically return to the right
+temperature if the inlet conditions change. A distillation column will not
+automatically hold product quality when feed composition shifts. In each case,
+the process needs measured information and deliberate corrective action.
 
-This leads to an important engineering conclusion: process control is not optional decoration added after design is complete. It is part of the operating strategy of the plant. Engineers design, construct, and operate systems so that they behave in an acceptable manner, and part of that effort is maintaining the process near desired conditions under realistic disturbances.
+This leads to an important engineering conclusion: process control is not
+optional decoration added after design is complete. It is part of the operating
+strategy of the plant. Engineers design, construct, and operate systems so that
+they behave in an acceptable manner, and part of that effort is maintaining the
+process near desired conditions under realistic disturbances.
 
 ## The Main Objectives of Control
 
-Process control can be organized around seven practical objectives. This framing is useful because it emphasizes that control is not only about equations or loop diagrams. It is about plant performance.
+Process control can be organized around seven practical objectives. This framing
+is useful because it emphasizes that control is not only about equations or loop
+diagrams. It is about plant performance.
 
 ### 1. Safety
 
-Safety is the highest-priority control objective. Plant operation must keep people and equipment away from hazardous conditions. Pressure, temperature, inventory, and reaction conditions must remain within acceptable limits. Control strategies help reduce the risk of unsafe excursions by responding quickly when variables drift away from target values. Safety also includes emergency and protective systems that act when normal control is no longer enough.
+Safety is the highest-priority control objective. Plant operation must keep
+people and equipment away from hazardous conditions. Pressure, temperature,
+inventory, and reaction conditions must remain within acceptable limits. Control
+strategies help reduce the risk of unsafe excursions by responding quickly when
+variables drift away from target values. Safety also includes emergency and
+protective systems that act when normal control is no longer enough.
 
 ### 2. Environmental Protection
 
-A plant must operate in a way that minimizes harmful releases and keeps emissions and effluent within acceptable limits. Control contributes by maintaining stable process conditions, preventing off-spec operation, and directing abnormal flows to containment or treatment when necessary.
+A plant must operate in a way that minimizes harmful releases and keeps
+emissions and effluent within acceptable limits. Control contributes by
+maintaining stable process conditions, preventing off-spec operation, and
+directing abnormal flows to containment or treatment when necessary.
 
 ### 3. Equipment Protection
 
-Chemical plant equipment is expensive and often difficult to replace without major downtime. Control helps keep temperature, pressure, flow, and level within ranges that prevent damage. For example, a controller may prevent a pump from running dry or stop pressure from exceeding equipment limits.
+Chemical plant equipment is expensive and often difficult to replace without
+major downtime. Control helps keep temperature, pressure, flow, and level within
+ranges that prevent damage. For example, a controller may prevent a pump from
+running dry or stop pressure from exceeding equipment limits.
 
 ### 4. Smooth Operation and Production Rate
 
-Plants perform better when major variables change smoothly rather than violently. Smooth operation reduces disturbances passed downstream, improves coordination between units, and supports stable production. Control also helps maintain the desired production rate by regulating flows and inventories in a way that matches plant objectives.
+Plants perform better when major variables change smoothly rather than
+violently. Smooth operation reduces disturbances passed downstream, improves
+coordination between units, and supports stable production. Control also helps
+maintain the desired production rate by regulating flows and inventories in a
+way that matches plant objectives.
 
 ### 5. Product Quality
 
-A process must produce material that meets specifications. That may mean keeping composition, purity, density, strength, or another quality variable within a narrow range. Control supports quality by reducing variability and holding the process near conditions that produce acceptable product.
+A process must produce material that meets specifications. That may mean keeping
+composition, purity, density, strength, or another quality variable within a
+narrow range. Control supports quality by reducing variability and holding the
+process near conditions that produce acceptable product.
 
 ### 6. Profit
 
-Ultimately, most industrial plants must operate profitably. Once safety and other critical constraints are satisfied, control can improve economics by reducing waste, improving quality, increasing throughput, and choosing efficient operating conditions. Profit should never be considered in isolation, but it is an important objective after safety and operability are secured.
+Ultimately, most industrial plants must operate profitably. Once safety and
+other critical constraints are satisfied, control can improve economics by
+reducing waste, improving quality, increasing throughput, and choosing efficient
+operating conditions. Profit should never be considered in isolation, but it is
+an important objective after safety and operability are secured.
 
 ### 7. Monitoring and Diagnosis
 
-Control systems also provide the information needed to observe plant condition and diagnose problems. Measurements, trends, alarms, and operator displays help engineers and operators understand whether the process is healthy, drifting, or approaching unacceptable operation.
+Control systems also provide the information needed to observe plant condition
+and diagnose problems. Measurements, trends, alarms, and operator displays help
+engineers and operators understand whether the process is healthy, drifting, or
+approaching unacceptable operation.
 
-Together, these seven objectives show that process control is about much more than holding a single variable near a number. It is one of the main tools used to make a plant safe, reliable, efficient, and economically useful.
+Together, these seven objectives show that process control is about much more
+than holding a single variable near a number. It is one of the main tools used
+to make a plant safe, reliable, efficient, and economically useful.
 
 ## Why Feedback Matters
 
-Feedback allows effective control without requiring a perfect plant model. If a process is controlled only by prediction, then model errors or unexpected disturbances can quickly produce poor performance. Feedback improves this situation because it measures the actual outcome and corrects based on what is really happening, not only on what was predicted.
+Feedback allows effective control without requiring a perfect plant model. If a
+process is controlled only by prediction, then model errors or unexpected
+disturbances can quickly produce poor performance. Feedback improves this
+situation because it measures the actual outcome and corrects based on what is
+really happening, not only on what was predicted.
 
-This does not mean feedforward or predictive ideas are unimportant. It means feedback is fundamental because it provides correction when reality differs from expectation. For that reason, feedback control is the natural starting point for most process control education and most plant control structures.
+This does not mean feedforward or predictive ideas are unimportant. It means
+feedback is fundamental because it provides correction when reality differs from
+expectation. For that reason, feedback control is the natural starting point for
+most process control education and most plant control structures.
 
-Another useful distinction is the difference between input and output in control language. Here, "input" does not simply mean material entering a unit and "output" does not only mean material leaving it. Instead, these words refer to the cause-and-effect structure of the control problem. The manipulated variable is the control input, and the measured controlled quantity is the output of interest. This perspective is essential when moving from physical intuition to control design.
+Another useful distinction is the difference between input and output in control
+language. Here, "input" does not simply mean material entering a unit and
+"output" does not only mean material leaving it. Instead, these words refer to
+the cause-and-effect structure of the control problem. The manipulated variable
+is the control input, and the measured controlled quantity is the output of
+interest. This perspective is essential when moving from physical intuition to
+control design.
 
 ## Closing Perspective
 
-The first module in process control should leave us with a clear picture of the field. Chemical plants are dynamic. Important variables drift because disturbances occur and operating goals change. Process control exists to maintain desired conditions despite that reality. A basic feedback loop achieves this by connecting measurement, comparison, decision, and final action.
+The first module in process control should leave us with a clear picture of the
+field. Chemical plants are dynamic. Important variables drift because
+disturbances occur and operating goals change. Process control exists to
+maintain desired conditions despite that reality. A basic feedback loop achieves
+this by connecting measurement, comparison, decision, and final action.
 
-Just as importantly, control is guided by real plant objectives. The purpose of control is not merely to "make the line look flat" on a screen. It is to support safe operation, environmental responsibility, equipment protection, stable production, product quality, profitability, and clear diagnosis of plant behavior.
+Just as importantly, control is guided by real plant objectives. The purpose of
+control is not merely to "make the line look flat" on a screen. It is to support
+safe operation, environmental responsibility, equipment protection, stable
+production, product quality, profitability, and clear diagnosis of plant
+behavior.
 
-These ideas form the conceptual foundation for everything that follows. Later modules may introduce mathematical models, transfer functions, controller tuning, and performance analysis, but those topics only make sense when tied back to this central question: what are we trying to keep under control, and why does it matter?
+These ideas form the conceptual foundation for everything that follows. Later
+modules may introduce mathematical models, transfer functions, controller
+tuning, and performance analysis, but those topics only make sense when tied
+back to this central question: what are we trying to keep under control, and why
+does it matter?

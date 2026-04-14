@@ -18,19 +18,19 @@ export const achievements: Achievement[] = [
     description: "Complete any two topics in the course.",
   },
   {
-    id: "loop-tuner",
-    title: "Loop Tuner",
-    description: "Complete the Controller Tuning topic.",
+    id: "laplace-launch",
+    title: "Laplace Launch",
+    description: "Complete the Laplace Transforms topic.",
   },
   {
-    id: "disturbance-detective",
-    title: "Disturbance Detective",
-    description: "Complete the Closed-Loop Performance topic.",
+    id: "model-builder",
+    title: "Model Builder",
+    description: "Complete the Mathematical Modelling Principles topic.",
   },
   {
-    id: "stability-scout",
-    title: "Stability Scout",
-    description: "Complete the Feedback Control Concepts topic.",
+    id: "transfer-function-scout",
+    title: "Transfer Function Scout",
+    description: "Complete the Transfer Functions and Linearized Process Models topic.",
   },
   {
     id: "reactor-whisperer",
@@ -61,16 +61,16 @@ export function getUnlockedAchievementIds(completedIds: string[]) {
     unlocked.push("transient-explorer");
   }
 
-  if (completed.has("select-rows")) {
-    unlocked.push("loop-tuner");
+  if (completed.has("laplace-transforms")) {
+    unlocked.push("laplace-launch");
   }
 
-  if (completed.has("combine-data")) {
-    unlocked.push("disturbance-detective");
+  if (completed.has("modeling-principles")) {
+    unlocked.push("model-builder");
   }
 
-  if (completed.has("query-basics")) {
-    unlocked.push("stability-scout");
+  if (completed.has("transfer-functions")) {
+    unlocked.push("transfer-function-scout");
   }
 
   if (completedIds.length >= 4) {
@@ -81,7 +81,7 @@ export function getUnlockedAchievementIds(completedIds: string[]) {
     .filter((module) => module.type === "skill")
     .map((module) => module.id);
 
-  if (appliedTopicIds.every((id) => completed.has(id))) {
+  if (appliedTopicIds.length > 0 && appliedTopicIds.every((id) => completed.has(id))) {
     unlocked.push("process-guardian");
   }
 

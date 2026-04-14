@@ -4,18 +4,23 @@ import { spawn } from "node:child_process";
 const graphDefinitions = [
   {
     name: "Module 2 Example 2.1 concentration plot",
-    output: "public/generated/modules/02/example_2_1.png",
+    output: "public/generated/modules/02/example_2_1.svg",
     script: "dev/scripts/modules/02/example_2_1.py",
   },
   {
     name: "Module 2 Example 2.2 comparison plot",
-    output: "public/generated/modules/02/example_2_2.png",
+    output: "public/generated/modules/02/example_2_2.svg",
     script: "dev/scripts/modules/02/example_2_2.py",
   },
   {
     name: "Module 2 linearization comparison plot",
-    output: "public/generated/modules/02/example_2_3.png",
+    output: "public/generated/modules/02/example_2_3.svg",
     script: "dev/scripts/modules/02/example_2_3.py",
+  },
+  {
+    name: "Module 2 Example 2.6 non-isothermal CSTR plot",
+    output: "public/generated/modules/02/example_2_6.svg",
+    script: "dev/scripts/modules/02/example_2_6.py",
   },
 ];
 

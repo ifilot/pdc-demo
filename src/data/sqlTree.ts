@@ -65,68 +65,33 @@ const moduleIndexRaw: ModuleRaw[] = [
       "interpret-dynamic-process-behavior",
       "work-with-simple-dynamic-models",
       "bridge-theory-and-practice",
-      "communicate-control-problems-clearly",
     ],
   },
   {
-    id: "tables",
-    name: "First-Order Process Models",
+    id: "laplace-transforms",
+    name: "Laplace Transforms",
     type: "concept",
-    description: "Build intuition for gains, time constants, and process response.",
-    prerequisites: ["modeling-principles"],
+    description:
+      "Introduce Laplace transforms as the bridge from differential equations to algebraic process analysis.",
+    prerequisites: [],
     learningGoalIds: [
       "interpret-dynamic-process-behavior",
       "work-with-simple-dynamic-models",
-      "bridge-theory-and-practice",
-    ],
-  },
-  {
-    id: "query-basics",
-    name: "Feedback Control Concepts",
-    type: "concept",
-    description: "Frame controlled, manipulated, and measured variables in loop design.",
-    prerequisites: ["tables"],
-    learningGoalIds: [
-      "reason-about-feedback-control",
       "communicate-control-problems-clearly",
       "bridge-theory-and-practice",
     ],
   },
   {
-    id: "select-rows",
-    name: "Controller Tuning",
-    type: "skill",
-    description: "Apply practical tuning logic for stable and responsive closed-loop behavior.",
-    prerequisites: ["query-basics"],
-    learningGoalIds: [
-      "reason-about-feedback-control",
-      "approach-tuning-and-performance-thoughtfully",
-      "bridge-theory-and-practice",
-    ],
-  },
-  {
-    id: "combine-data",
-    name: "Closed-Loop Performance",
-    type: "skill",
-    description: "Interpret overshoot, settling, robustness, and disturbance rejection.",
-    prerequisites: ["query-basics"],
+    id: "transfer-functions",
+    name: "Transfer Functions and Linearized Process Models",
+    type: "concept",
+    description:
+      "Use Laplace-domain input-output models, series combinations, and linearization to analyze process dynamics.",
+    prerequisites: ["modeling-principles", "laplace-transforms"],
     learningGoalIds: [
       "interpret-dynamic-process-behavior",
-      "approach-tuning-and-performance-thoughtfully",
-      "bridge-theory-and-practice",
-    ],
-  },
-  {
-    id: "final-project",
-    name: "Control Strategy Review",
-    type: "skill",
-    description: "Integrate the core concepts into a compact Process Dynamics and Control case review.",
-    prerequisites: ["select-rows", "combine-data"],
-    learningGoalIds: [
       "work-with-simple-dynamic-models",
-      "reason-about-feedback-control",
       "communicate-control-problems-clearly",
-      "approach-tuning-and-performance-thoughtfully",
       "bridge-theory-and-practice",
     ],
   },
@@ -152,8 +117,6 @@ const dy = cardHeight * 1.7;
 const y1 = margin + cardHeight / 2;
 const y2 = y1 + dy;
 const y3 = y2 + dy;
-const y4 = y3 + dy;
-const y5 = y4 + dy;
 
 const dx = cardWidth * 1.7;
 const x1 = margin + cardWidth / 2;
@@ -162,12 +125,9 @@ const x3 = x2 + dx;
 
 const positionsRaw: Record<string, Position> = {
   "intro-data": { x: x2, y: y1 },
-  "modeling-principles": { x: x2, y: y2 },
-  tables: { x: x2, y: y3 },
-  "query-basics": { x: x2, y: y4 },
-  "select-rows": { x: x1, y: y5 },
-  "combine-data": { x: x3, y: y5 },
-  "final-project": { x: x2, y: y5 + dy },
+  "modeling-principles": { x: x3, y: y2 },
+  "laplace-transforms": { x: x1, y: y2 },
+  "transfer-functions": { x: x2, y: y3 },
 };
 
 function angleFromVertical(dxValue: number, dyValue: number) {
@@ -292,7 +252,7 @@ export const connectors: Connector[] = Object.values(positionedModules).flatMap(
 
 export const treeBounds = {
   width: x3 + cardWidth / 2 + margin + 80,
-  height: y5 + dy + cardHeight / 2 + margin + 80,
+  height: y3 + cardHeight / 2 + margin + 80,
 };
 
 export const learningGoals: LearningGoal[] = [

@@ -33,7 +33,22 @@ export interface ListBlock {
   items: string[];
 }
 
-export type ContentBlock = TextBlock | HeadingBlock | PythonBlock | ImageBlock | CalloutBlock | ListBlock;
+export interface TableBlock {
+  type: "table";
+  headers: string[];
+  rows: string[][];
+  caption?: string;
+  width?: string;
+}
+
+export type ContentBlock =
+  | TextBlock
+  | HeadingBlock
+  | PythonBlock
+  | ImageBlock
+  | CalloutBlock
+  | ListBlock
+  | TableBlock;
 
 export interface ModuleQuestion {
   id: string;

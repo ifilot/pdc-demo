@@ -119,7 +119,6 @@ export function ModulePage() {
             {completed ? "Completed 🏆" : "In progress"}
           </span>
           <span>{module.type === "concept" ? "◧ Theory topic" : "⚙ Applied topic"}</span>
-          <span>{learningGoals.length} learning goal{learningGoals.length === 1 ? "" : "s"}</span>
         </div>
       </section>
 

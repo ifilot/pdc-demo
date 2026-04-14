@@ -1,8 +1,11 @@
-Controller tuning is the practical task of choosing parameters that deliver acceptable speed, stability, and robustness.
+Controller tuning is the practical task of choosing parameters that deliver
+acceptable speed, stability, and robustness.
 
-Even when a formal rule is used, the engineer still judges the operating context, actuator limits, and disturbance environment.
+Even when a formal rule is used, the engineer still judges the operating
+context, actuator limits, and disturbance environment.
 
-A common proportional-integral-derivative form is $$u(t)=K_c\left(e(t)+\frac{1}{\tau_I}\int e(t)dt + \tau_D \frac{de}{dt}\right).$$
+A common proportional-integral-derivative form is
+$$u(t)=K_c\left(e(t)+\frac{1}{\tau_I}\int e(t)dt + \tau_D \frac{de}{dt}\right).$$
 
 ```python | A compact PID calculation loop
 Kc = 2.5

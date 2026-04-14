@@ -1,6 +1,9 @@
-Many process units can be approximated as first-order systems over a useful operating region. This gives an intuitive bridge between physics and control design.
+Many process units can be approximated as first-order systems over a useful
+operating region. This gives an intuitive bridge between physics and control
+design.
 
-The two most recognizable parameters are process gain $K$ and time constant $\tau$. Together they explain how far and how fast the output responds.
+The two most recognizable parameters are process gain $K$ and time constant
+$\tau$. Together they explain how far and how fast the output responds.
 
 $$G_p(s)=\frac{K}{\tau s + 1}$$
 

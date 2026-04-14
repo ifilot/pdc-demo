@@ -199,6 +199,21 @@ When adding a new module folder:
   - `summary.md`
   - `checkpoint.ts`
 
+Module Markdown should preferably be written to an 80-column layout for normal
+prose so that authored content remains easy to review in diffs and in plain-text
+editors.
+
+Codex should keep this as a preference rather than an absolute rule. Do not
+force 80-column wrapping when doing so would make the content worse or risk
+breaking rendering, for example in:
+
+- display equations
+- inline-heavy mathematical lines
+- image references
+- fenced code blocks
+- code-listing captions
+- other syntax where wrapping would reduce clarity or be fragile
+
 ## Example Authoring Rules
 
 Worked examples are part of the teaching voice of the module and should be visually distinct from the surrounding explanatory text.

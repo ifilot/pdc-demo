@@ -1,9 +1,8 @@
-"""Reproduce Figure C.2 from Appendix C.2: non-isothermal CSTR response.
+"""Generate the figure for Module 2, Example 2.6: non-isothermal CSTR response.
 
-This script implements the nonlinear mass and energy balances from
-Appendix C, equations (C.9) and (C.10), and integrates them with the
-explicit Euler method using the same step size noted below Figure C.2:
-dt = 0.005 min.
+This script implements the nonlinear mass and energy balances for a
+non-isothermal CSTR and integrates them with explicit Euler using a
+small step size. The disturbance is a step change in coolant flow.
 
 The simulated disturbance is a step change in coolant flow from
 15 to 14 m^3/min at t = 1 min.
@@ -42,7 +41,7 @@ B = 0.5
 # The script solves the nonlinear steady-state equations directly so the
 # trajectory is exactly flat before the disturbance at t = 1 min.
 
-# Numerical settings used for Figure C.2
+# Numerical settings used for Example 2.6
 T_START = 0.0
 T_END = 6.0
 T_STEP = 0.005
@@ -51,7 +50,7 @@ FC_STEP = -1.0  # m^3/min
 
 
 def coolant_flow(time_min: float) -> float:
-    """Cooling-flow input used in Figure C.2."""
+    """Cooling-flow input used in Example 2.6."""
     return FC_STEADY if time_min < DISTURBANCE_TIME else FC_STEADY + FC_STEP
 
 
@@ -155,22 +154,23 @@ def make_figure(time: np.ndarray, ca: np.ndarray, temperature: np.ndarray) -> pl
     fig, axes = plt.subplots(2, 1, figsize=(7.6, 5.8), sharex=True)
 
     axes[0].plot(time, ca, color="black", linewidth=1.8)
-    axes[0].set_ylabel("Reactor concentration")
+    axes[0].set_ylabel(r"Reactor concentration (kmol/m$^3$)")
     axes[0].set_xlim(T_START, T_END)
     axes[0].set_ylim(0.23, 0.27)
     axes[0].set_yticks([0.24, 0.26])
     axes[0].set_xlabel("Time (min)")
     axes[0].tick_params(direction="in", top=True, right=True, length=4, width=1)
+    axes[0].grid(linestyle="--", color="black", alpha=0.5)
 
     axes[1].plot(time, temperature, color="black", linewidth=1.8)
-    axes[1].set_ylabel("Reactor temperature")
+    axes[1].set_ylabel("Reactor temperature (K)")
     axes[1].set_xlabel("Time (min)")
     axes[1].set_xlim(T_START, T_END)
     axes[1].set_ylim(393.0, 397.0)
     axes[1].set_yticks([394.0, 396.0])
     axes[1].tick_params(direction="in", top=True, right=True, length=4, width=1)
+    axes[1].grid(linestyle="--", color="black", alpha=0.5)
 
-    fig.suptitle("Figure C.2: Non-isothermal CSTR response", fontsize=12, y=0.98)
     fig.tight_layout()
     return fig
 
@@ -180,6 +180,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output",
         type=Path,
+        default=Path("public/generated/modules/02/example_2_6.svg"),
         help="Optional path to save the generated figure instead of only showing it.",
     )
     parser.add_argument(
@@ -198,7 +199,7 @@ def main() -> None:
 
     if args.output is not None:
         args.output.parent.mkdir(parents=True, exist_ok=True)
-        figure.savefig(args.output, dpi=200, bbox_inches="tight")
+        figure.savefig(args.output, format="svg", bbox_inches="tight")
 
     if args.no_show:
         plt.close(figure)

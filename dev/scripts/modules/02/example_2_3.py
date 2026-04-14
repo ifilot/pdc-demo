@@ -103,7 +103,6 @@ def make_figure(
         fontsize=9,
     )
 
-    ax.set_title("Example 2.3: Linear and nonlinear responses", fontsize=12)
     ax.set_xlabel("Time (min)")
     ax.set_ylabel(r"Concentration, $C_A$ (kmol/m$^3$)")
     ax.set_xlim(T_START, T_END)
@@ -128,7 +127,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("public/generated/modules/02/example_2_3.png"),
+        default=Path("public/generated/modules/02/example_2_3.svg"),
         help="Path to save the generated figure.",
     )
     parser.add_argument(
@@ -147,7 +146,7 @@ def main() -> None:
     fig = make_figure(time_min, nonlinear_concentration, linear_concentration)
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(args.output, dpi=200, bbox_inches="tight")
+    fig.savefig(args.output, format="svg", bbox_inches="tight")
 
     if args.no_show:
         plt.close(fig)

@@ -52,6 +52,40 @@ export function RichContent({ blocks }: { blocks: ContentBlock[] }) {
           );
         }
 
+        if (block.type === "table") {
+          return (
+            <figure
+              key={index}
+              className="content-table-shell"
+              style={block.width ? { maxWidth: block.width, marginInline: "auto" } : undefined}
+            >
+              <table className="content-table">
+                <thead>
+                  <tr>
+                    {block.headers.map((header, headerIndex) => (
+                      <th key={headerIndex}>
+                        <MathParagraph text={header} />
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {block.rows.map((row, rowIndex) => (
+                    <tr key={rowIndex}>
+                      {row.map((cell, cellIndex) => (
+                        <td key={cellIndex}>
+                          <MathParagraph text={cell} />
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {block.caption && <figcaption className="content-image-caption">{block.caption}</figcaption>}
+            </figure>
+          );
+        }
+
         return (
           <Suspense
             key={index}
