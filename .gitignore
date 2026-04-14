@@ -11,3 +11,7 @@ Thumbs.db
 !.env.example
 
 sources
+# Generated module graphs
+public/generated/
+__pycache__/
+*.pyc

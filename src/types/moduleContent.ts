@@ -15,7 +15,14 @@ export interface PythonBlock {
   caption?: string;
 }
 
-export type ContentBlock = TextBlock | HeadingBlock | PythonBlock;
+export interface ImageBlock {
+  type: "image";
+  src: string;
+  alt: string;
+  caption?: string;
+}
+
+export type ContentBlock = TextBlock | HeadingBlock | PythonBlock | ImageBlock;
 
 export interface ModuleQuestion {
   id: string;

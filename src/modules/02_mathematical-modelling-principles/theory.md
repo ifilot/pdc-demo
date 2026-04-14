@@ -1,3 +1,5 @@
+# Module 2: Mathematical Modelling Principles
+
 # Why We Model
 
 Process control depends on being able to describe how a process changes with time, because without such a description it is difficult to predict how the system will react to disturbances, operating changes, or control actions. A mathematical model provides this description in a form that can be analyzed and used for engineering decisions. In practice, models allow us to estimate transient behavior, compare alternative equipment designs, determine which variables most strongly influence the response, and judge whether a process is likely to be easy or difficult to control.
@@ -59,7 +61,7 @@ Validation means deciding whether the model is good enough for its intended use.
 
 It is important to remember that no model is ever proven universally true. At best, a model is shown to be acceptable over a certain range of conditions and for a certain purpose. That is normally sufficient for engineering, provided the model’s limitations are understood and not ignored.
 
-# Worked Example: A Stirred-Tank Mixer
+# Example 2.1: A Stirred-Tank Mixer
 
 Consider a perfectly mixed tank of constant volume $V$ with inlet and outlet flow rate $F$. Suppose that the inlet concentration changes suddenly and we want to determine the concentration in the tank, $C_A(t)$. This is one of the simplest and most useful examples in process dynamics because it shows how a straightforward material balance leads directly to first-order behavior.
 
@@ -94,7 +96,9 @@ $$\tau = \frac{2.1}{0.085} = 24.7\ \mathrm{min}$$
 
 This means that after one time constant the concentration has completed about 63.2% of its total change, and after roughly $4\tau$ the tank is very close to its new steady state. The example is important because it shows how the mathematics and the physics align: a larger volume slows the response by increasing the system’s capacity to accumulate material, while a larger flow rate speeds the response by reducing the effective residence time.
 
-# Worked Example: An Isothermal CSTR
+![Module 2 Example 2.1 concentration response](/generated/module-02-example-2-1-concentration.png "Concentration response for a stirred-tank mixer after an inlet step change")
+
+# Example 2.2: An Isothermal CSTR
 
 Now consider a well-mixed isothermal reactor with a first-order reaction:
 
@@ -175,7 +179,7 @@ The key numerical issue is step size:
 
 A useful practical rule is to choose the step size small relative to the smallest time constant in the system and then check whether reducing the step size further changes the answer significantly. In this way, numerical work becomes not only a computational exercise but also another form of engineering judgement.
 
-# Worked Example: One Euler Step
+# Example 2.3: One Euler Step
 
 To see the numerical logic clearly, consider the first-order model:
 
@@ -199,7 +203,7 @@ $$y(1) \approx y(0) + \Delta t \left(\frac{dy}{dt}\right) = 0 + 1(1.2) = 1.2$$
 
 So the estimated value after one minute is $1.2$. Although this example is very simple, it illustrates the essential idea behind numerical integration: evaluate the slope at the current point, then use that slope to advance the solution forward in time.
 
-# A More Complex Example: The Nonisothermal Reactor
+# Example 2.4: The Nonisothermal Reactor
 
 A nonisothermal CSTR couples a material balance and an energy balance, so concentration and temperature influence each other through the reaction rate and the heat of reaction. As a result, the dynamic behavior can be much richer than in simple first-order mixing problems. Depending on kinetics, heat transfer, and operating conditions, the reactor may show slow overdamped behavior, fast but stable behavior, oscillatory transients, or strong sensitivity to changes in cooling.
 

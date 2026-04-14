@@ -104,6 +104,18 @@ function parseMarkdownContent(markdown: string): ContentBlock[] {
       continue;
     }
 
+    const imageMatch = trimmed.match(/^!\[([^\]]*)\]\((\S+)(?:\s+"([^"]+)")?\)$/);
+    if (imageMatch) {
+      flushParagraph();
+      blocks.push({
+        type: "image",
+        alt: imageMatch[1].trim(),
+        src: imageMatch[2].trim(),
+        caption: imageMatch[3]?.trim(),
+      });
+      continue;
+    }
+
     paragraphLines.push(trimmed);
   }
 

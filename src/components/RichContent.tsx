@@ -19,6 +19,15 @@ export function RichContent({ blocks }: { blocks: ContentBlock[] }) {
           return <HeadingTag key={index}>{block.text}</HeadingTag>;
         }
 
+        if (block.type === "image") {
+          return (
+            <figure key={index} className="content-image-shell">
+              <img className="content-image" src={block.src} alt={block.alt} loading="lazy" />
+              {block.caption && <figcaption className="content-image-caption">{block.caption}</figcaption>}
+            </figure>
+          );
+        }
+
         return (
           <Suspense
             key={index}

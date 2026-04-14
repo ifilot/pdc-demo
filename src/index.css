@@ -894,6 +894,27 @@ h2 {
   gap: 12px;
 }
 
+.content-image-shell {
+  margin: 0 0 18px;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(42, 68, 53, 0.08);
+  background: #f7faf8;
+}
+
+.content-image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.content-image-caption {
+  padding: 10px 14px;
+  border-top: 1px solid rgba(42, 68, 53, 0.08);
+  color: #4c6258;
+  font-size: 0.88rem;
+}
+
 .code-block-shell {
   margin: 0 0 18px;
   border-radius: 18px;
