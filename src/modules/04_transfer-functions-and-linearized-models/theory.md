@@ -298,17 +298,18 @@ blocks systematically.
 > # Example 4.4: A Simple Feedback Block Diagram
 >
 > The transfer function picture becomes even clearer when it is drawn as a block
-> diagram. The figure below shows a simple closed-loop system with a summing
-> junction, a process block $G(s)=\frac{1}{s+1}$, an output $y$, and a unity
-> feedback path.
+> diagram. The figure below shows a standard negative-feedback loop with a
+> reference input $r$, an error signal $e$, a process block
+> $G(s)=\frac{1}{s+1}$, an output $y$, and a unity measurement block
+> $H(s)=1$ in the feedback path.
 >
-> ![Example 4.4 feedback block diagram](/generated/modules/04/example_4_4_feedback_block_diagram.svg "Figure 4.1: Simple closed-loop block diagram with process transfer function 1/(s+1) and unity feedback | width=52%")
+> ![Example 4.4 feedback block diagram](/generated/modules/04/example_4_4_feedback_block_diagram.svg "Figure 4.1: Standard negative-feedback loop with process transfer function G(s)=1/(s+1) and unity measurement H(s)=1 | width=58%")
 >
 > This diagram is useful because it separates the roles of the signals and the
-> dynamics. The input $u$ enters the summing junction, the process block maps
-> the resulting signal to the output $y$, and the feedback line returns the
-> measured output to the summing point. In later feedback analysis, this same
-> visual language helps us derive closed-loop transfer functions and reason about
+> dynamics. The reference signal $r$ is compared with the measured output
+> $y_m$, the difference becomes the error signal $e$, and the process block maps
+> that signal to the output $y$. In later feedback analysis, this same visual
+> language helps us derive closed-loop transfer functions and reason about
 > disturbance rejection and stability.
 
 ## Why Nonlinear Models Must Often Be Linearized

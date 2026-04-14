@@ -1,24 +1,31 @@
 \documentclass[tikz]{standalone}
 
 \usepackage{amsmath}
-\usetikzlibrary{arrows.meta, positioning}
+\usetikzlibrary{arrows.meta, positioning, calc}
 
 \tikzstyle{block} = [draw, rectangle, minimum height=3em, minimum width=7em]
-\tikzstyle{sum} = [draw, circle]
+\tikzstyle{sum} = [draw, circle, minimum size=1.1cm, inner sep=0pt]
 
 \begin{document}
 
 \begin{tikzpicture}[auto, node distance=2.2cm, >=Latex]
 
 \node (input) {};
-\node [sum, right of=input] (sum) {$+$};
-\node [block, right of=sum] (G) {$\dfrac{1}{s+1}$};
+\node [sum, right of=input] (sum) {};
+\node [block, right=2.4cm of sum] (G) {$G(s)=\dfrac{1}{s+1}$};
 \node (output) [right of=G] {};
+\node [block, below=1.8cm of G] (H) {$H(s)=1$};
+\coordinate (feedbacktap) at ($(output)+(0,0)$);
+\coordinate (feedbackdown) at ($(feedbacktap)+(0,-1.8)$);
 
-\draw [->] (input) -- node {$u$} (sum);
-\draw [->] (sum) -- (G);
+\node at (sum.center) {$+$};
+\node at ($(sum.center)+(0,-0.34)$) {$-$};
+
+\draw [->] (input) -- node {$r$} (sum);
+\draw [->] (sum) -- node {$e$} (G);
 \draw [->] (G) -- node {$y$} (output);
-\draw [->] (output.south) |- (sum.south);
+\draw [->] (feedbacktap) |- (H.east);
+\draw [->] (H.west) -| node[pos=0.95, left] {$y_m$} (sum.south);
 
 \end{tikzpicture}
 

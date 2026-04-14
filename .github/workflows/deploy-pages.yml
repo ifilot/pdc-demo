@@ -47,7 +47,7 @@ jobs:
             poppler-utils
 
       - name: Install graph dependencies
-        run: pip install -r dev/requirements-graphs.txt
+        run: python -m pip install -r dev/requirements-graphs.txt
 
       - name: Build site
         run: npm run build
